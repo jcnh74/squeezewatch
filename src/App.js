@@ -19,7 +19,18 @@ export default class App extends React.Component {
       coins:[
         {fsym: 'BTC', tsym: 'USD', rank: 1}
       ],
-      deviceWidth: deviceWidth
+      deviceWidth: deviceWidth,
+      scale:[
+        ['1H','hour',1, true, 0],
+        ['2H','hour',2, false, 0],
+        ['3H','hour',3, false, 0],
+        ['4H','hour',4, false, 0],
+        ['6H','hour',6, false, 0],
+        ['8H','hour',8, false, 0],
+        ['12H','hour',12, false, 0],
+        ['1D','day',1, false, 0],
+        ['1W','day',7, false, 0]
+      ]
     }
     
     const _this = this
@@ -82,22 +93,34 @@ export default class App extends React.Component {
         fsym:fsym, 
         tsym:tsym, 
         histo:histo.Data,
-        scale:[
-          ['1H','hour',1, true, 0],
-          ['2H','hour',2, false, 0],
-          ['3H','hour',3, false, 0],
-          ['4H','hour',4, false, 0],
-          ['6H','hour',6, false, 0],
-          ['8H','hour',8, false, 0],
-          ['12H','hour',12, false, 0],
-          ['1D','day',1, false, 0],
-          ['1W','day',7, false, 0]
-        ]
+        scale: this.state.scale
       }])
     });
 
   }
+  
+  async updateAllCoins(scaleIndex){
+    this.state.coins.map(async (coin, index) => {
+      
 
+      const historyres = await fetch('https://min-api.cryptocompare.com/data/histo'+this.state.scale[scaleIndex][1]+'?fsym='+coin.fsym+'&tsym='+coin.tsym+'&limit=80&aggregate='+this.state.scale[scaleIndex][2]+'&e=CCCAGG')
+      const histo = await historyres.json().then((data) => data)
+
+      const data = this.state.data;
+      data[index].histo = histo.Data;
+      data[index].scale = this.state.data[index].scale.map((s, i) => [s[0], s[1], s[2], (scaleIndex === i) ? true : false, s[4]])
+      
+      const scale = this.state.scale.map((s, i) => [s[0], s[1], s[2], (scaleIndex === i) ? true : false, s[4]])
+
+      this.setState({
+        scale:scale
+      })
+      
+
+      
+    })
+
+  }
   async updateCoin(fsym, tsym, scale, aggregate, index, scaleIndex){
 
     const historyres = await fetch('https://min-api.cryptocompare.com/data/histo'+scale+'?fsym='+fsym+'&tsym='+tsym+'&limit=80&aggregate='+aggregate+'&e=CCCAGG')
@@ -110,7 +133,7 @@ export default class App extends React.Component {
     //console.log(histo.Data)
 
     // re-render
-    this.forceUpdate()
+    await this.forceUpdate()
 
 
   }
@@ -161,6 +184,15 @@ export default class App extends React.Component {
 
   
   render() {
+
+    let globalsqueezetimes = this.state.scale.map((item, scaleIndex)=> {
+      console.log(item[3],scaleIndex)
+      return (
+        <TouchableHighlight key={scaleIndex} style={(item[3]) ? styles.squeezetimeselected : styles.squeezetime} onPress={() => this.updateAllCoins(scaleIndex)}>
+          <Text style={styles.squeezetimetext}>{item[0]}</Text>
+        </TouchableHighlight>
+      )
+    })
 
     const sorteddata = this.state.data.sort((a, b) => {
       return a.current.rank - b.current.rank;
@@ -287,6 +319,7 @@ export default class App extends React.Component {
         <View style={[styles.wrapper,{width: (this.state.deviceWidth+'px' ? this.state.deviceWidth+'px' : '1400px'),}]}>
           <View style={styles.header}>
             <Text style={styles.headertext}>Squeeze Watch</Text>
+            <View style={styles.squeezetimewrap}>{globalsqueezetimes}</View>
           </View>
           <View style={styles.grid}>
             {griditems}
