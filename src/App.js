@@ -1,12 +1,22 @@
 import React from 'react'
 import "typeface-exo"
-import { AppRegistry, StyleSheet, Text, View, TouchableHighlight, AsyncStorage, Dimensions } from 'react-native'
-import moment from 'moment'
-import formatCurrency from'format-currency'
+import { AppRegistry, Text, View, TouchableHighlight, Dimensions } from 'react-native'
+import Coin from'./components/Coin'
+
+import Select from 'react-select';
+import 'react-select/dist/react-select.css';
+
+import styled, { css } from 'styled-components';
+
 
 
 // import sma from 'sma'
 // import stats from 'stats-lite'
+
+const coinlist = []
+const COUNT = 6
+const MAX_CONTRIBUTORS = 6;
+const ASYNC_DELAY = 500;
 
 export default class App extends React.Component {
 
@@ -16,29 +26,39 @@ export default class App extends React.Component {
 
     this.state = {
       data:[],
-      coins:[
-        {fsym: 'BTC', tsym: 'USD', rank: 1}
-      ],
+      coins:coinlist,
       deviceWidth: deviceWidth,
-      scale:[
-        ['1H','hour',1, true, 0],
-        ['2H','hour',2, false, 0],
-        ['3H','hour',3, false, 0],
-        ['4H','hour',4, false, 0],
-        ['6H','hour',6, false, 0],
-        ['8H','hour',8, false, 0],
-        ['12H','hour',12, false, 0],
-        ['1D','day',1, false, 0],
-        ['1W','day',7, false, 0]
-      ]
+      scales:[
+        // ['1M','minute',1],
+        // ['5M','minute',5],
+        // ['15M','minute',15],
+        // ['30M','minute',30],
+        ['1H','hour',1],
+        ['2H','hour',2],
+        ['3H','hour',3],
+        ['4H','hour',4],
+        ['6H','hour',6],
+        ['8H','hour',8],
+        ['12H','hour',12],
+        ['1D','day',1],
+        ['1W','day',7]
+      ],
+      current:0,
+      selectedOption: '',
+      allcoins:[]
     }
     
     const _this = this
-    _this.coinList('BTC', 9)
+    _this.defaultCoinList('USD', COUNT)
+
     
-    setInterval(function() {
-      _this.coinList('BTC', 9)
-    }, (60 * 8) * 1000);
+    // setInterval(function() {
+    //   _this.defaultCoinList('BTC', count)
+    // }, (60 * 8) * 1000)
+
+    this.gotoCoin = this.gotoCoin.bind(this)
+    this.onChange = this.onChange.bind(this)
+    this.getCoins = this.getCoins.bind(this)
 
   }
 
@@ -47,14 +67,12 @@ export default class App extends React.Component {
     this.setState({deviceWidth: deviceWidth})
   }
 
-  async coinList(tsym, count){
+  async defaultCoinList(tsym, count){
 
     const list = await fetch('https://api.coinmarketcap.com/v1/ticker/?limit='+count)
     const myCoins = await list.json().then((data) => data)
-
     this.setState({
-      coins:[{fsym: 'BTC', tsym: 'USD', rank: 1}],
-      data:[]
+      data:myCoins
     }, () => {
 
       const theCoins = myCoins.map((coin,index) => {
@@ -69,72 +87,59 @@ export default class App extends React.Component {
           percent_change_24h: coin['percent_change_24h']
         }
       })
+      const options = myCoins.map((coin,index) => {
+        return {
+          symbol: coin.symbol, 
+          name: coin['name'] + ' [' + coin.symbol + ']'
+        }
+      })
       this.setState({
-        coins:theCoins
-      },() => {
-        this.state.coins.map((coin,coinIndex) => {
-          return this.getCoin(coin.fsym,coin.tsym,'hour',1, coin)
-        })
+        coins:theCoins,
+        allcoins: options
+
+      }, () => {
+        this.getAllCoins()
       })
     });
     
   }
 
-  async getCoin(fsym, tsym, scale, aggregate, current) {
-    fsym = (fsym === 'MIOTA') ? 'IOT' : fsym
-    const historyres = await fetch('https://min-api.cryptocompare.com/data/histo'+scale+'?fsym='+fsym+'&tsym='+tsym+'&limit=80&aggregate='+aggregate+'&e=CCCAGG')
-    const histo = await historyres.json().then((data) => data)
+  async myCoinList(value){
+    //https://min-api.cryptocompare.com/data/generateAvg?fsym=BTC&tsym=USD&e=CCCAGG
+    
+    const data = Promise.all(
+      value.map(async (i) => {
+        const tsym = (i.symbol === 'BTC' ? 'USD' : 'BTC')
+        return await (await fetch('https://min-api.cryptocompare.com/data/generateAvg?fsym='+i.symbol+'&tsym='+tsym+'&e=CCCAGG')).json()
+      })
+    )
+    return data  
+  }
 
+  async getAllCoins(){
+    const list = await fetch('https://min-api.cryptocompare.com/data/all/coinlist')
+    const myCoins = await list.json().then((data) => data.Data)
+
+    const sorteddata = Object.values(myCoins).sort((a, b) => {
+      return a.SortOrder - b.SortOrder;
+    })
+    const allcoins = await sorteddata.map((coin,index) => {
+      return {
+        symbol: coin.Symbol, 
+        name: coin.CoinName + ' [' + coin.Symbol + ']'
+      }
+    })
     this.setState({
-      data: this.state.data.concat([{
-        current: current,
-        coinprice: 0, 
-        cointime: 0, 
-        fsym:fsym, 
-        tsym:tsym, 
-        histo:histo.Data,
-        scale: this.state.scale
-      }])
-    });
+      allcoins:allcoins
+    })
 
   }
   
   async updateAllCoins(scaleIndex){
-    this.state.coins.map(async (coin, index) => {
-      
-
-      const historyres = await fetch('https://min-api.cryptocompare.com/data/histo'+this.state.scale[scaleIndex][1]+'?fsym='+coin.fsym+'&tsym='+coin.tsym+'&limit=80&aggregate='+this.state.scale[scaleIndex][2]+'&e=CCCAGG')
-      const histo = await historyres.json().then((data) => data)
-
-      const data = this.state.data;
-      data[index].histo = histo.Data;
-      data[index].scale = this.state.data[index].scale.map((s, i) => [s[0], s[1], s[2], (scaleIndex === i) ? true : false, s[4]])
-      
-      const scale = this.state.scale.map((s, i) => [s[0], s[1], s[2], (scaleIndex === i) ? true : false, s[4]])
-
-      this.setState({
-        scale:scale
-      })
-      
-
-      
+    console.log(scaleIndex)
+    this.setState({
+      current: scaleIndex
     })
-
-  }
-  async updateCoin(fsym, tsym, scale, aggregate, index, scaleIndex){
-
-    const historyres = await fetch('https://min-api.cryptocompare.com/data/histo'+scale+'?fsym='+fsym+'&tsym='+tsym+'&limit=80&aggregate='+aggregate+'&e=CCCAGG')
-    const histo = await historyres.json().then((data) => data)
-
-
-    const data = this.state.data;
-    data[index].histo = histo.Data;
-    data[index].scale = this.state.data[index].scale.map((s, i) => [s[0], s[1], s[2], (scaleIndex === i) ? true : false, s[4]])
-    //console.log(histo.Data)
-
-    // re-render
-    await this.forceUpdate()
-
 
   }
 
@@ -145,310 +150,178 @@ export default class App extends React.Component {
     }
 
     componentWillUnmount() {
-    window.removeEventListener("resize", this.updateDimensions.bind(this));
+    //window.removeEventListener("resize", this.updateDimensions.bind(this));
     }
 
   componentDidMount() {
     this.updateDimensions()
-    window.addEventListener("resize", this.updateDimensions.bind(this));
+    //window.addEventListener("resize", this.updateDimensions.bind(this));
 
-    let UID123_object = {
-      name: 'Chris',
-      age: 30,
-      traits: {hair: 'brown', eyes: 'brown'},
-    };
+  }
 
-    // You only need to define what will be added or updated
-    let UID123_delta = {
-      age: 31,
-      traits: {eyes: 'blue', shoe_size: 10},
-    };
-  
-    AsyncStorage.setItem('UID123', JSON.stringify(UID123_object), () => {
-      AsyncStorage.mergeItem('UID123', JSON.stringify(UID123_delta), () => {
-        AsyncStorage.getItem('UID123', (err, result) => {
-          console.log(result);
-        });
-      });
+  onChange(value) {
+		this.setState({
+			value: value,
+		},() => {
+
+      this.myCoinList(this.state.value).then(data => {
+        const theCoins = data.map((coin, index) => {
+          return {
+            fsym: coin.RAW.FROMSYMBOL, 
+            tsym: coin.RAW.TOSYMBOL,
+            name: coin.RAW.FROMSYMBOL, 
+            volume: coin.RAW.VOLUME24HOURTO, 
+            price: coin.RAW.PRICE, 
+            price_btc: coin.RAW.PRICE, 
+            rank: index, 
+            percent_change_24h: coin.RAW.CHANGEPCT24HOUR
+          }
+        })
+        console.log(theCoins)
+        if(theCoins.length > 0){
+          this.setState({
+            coins:theCoins,  
+          })
+        }else{
+          this.defaultCoinList('USD', COUNT)
+        }
+
+      })
     });
   }
-
-  overCandle(price,index, time){
-    const data = this.state.data;
-    data[index].coinprice = price;
-    data[index].cointime = time;
-
-    // re-render
-    this.forceUpdate();
+  
+  gotoCoin(value, event) {
+		console.log(value, event)
   }
+  
+  getCoins(input, callback) {
+    input = input.toUpperCase();
+		var options = this.state.allcoins.filter(i => {
+			return i.symbol.substr(0, input.length) === input
+    });
+		var data = {
+			options: options.slice(0, MAX_CONTRIBUTORS),
+			complete: options.length <= MAX_CONTRIBUTORS,
+		};
+		setTimeout(function() {
+			callback(null, data);
+		}, ASYNC_DELAY)
+	}
 
   
   render() {
 
-    let globalsqueezetimes = this.state.scale.map((item, scaleIndex)=> {
-      console.log(item[3],scaleIndex)
+    const ScaleButton = styled.button`
+      align-items: center;
+      flex:1;
+      padding: 4px;
+      background:transparent;
+      border:2px solid transparent;
+      color:white;
+      cursor:pointer;
+
+      ${props => props.selected && css`
+        border-bottom-width:2px;
+        border-bottom-color: white;
+      `};
+      width: ${props => props.width};
+    `
+
+
+    let globalsqueezetimes = this.state.scales.map((item, scaleIndex)=> {
       return (
-        <TouchableHighlight key={scaleIndex} style={(item[3]) ? styles.squeezetimeselected : styles.squeezetime} onPress={() => this.updateAllCoins(scaleIndex)}>
-          <Text style={styles.squeezetimetext}>{item[0]}</Text>
-        </TouchableHighlight>
+        <ScaleButton 
+          key={scaleIndex} 
+          selected={(this.state.current === scaleIndex) ? true : false} 
+          width={100/this.state.scales.length+'%'} 
+          onClick={() => this.updateAllCoins(scaleIndex)}>
+            {item[0]}
+        </ScaleButton>
       )
     })
 
-    const sorteddata = this.state.data.sort((a, b) => {
-      return a.current.rank - b.current.rank;
+    const sorteddata = this.state.coins.sort((a, b) => {
+    
+      return a.rank - b.rank;
     })
-    const griditems = sorteddata.map((coin,coinIndex) => {
-
-      // [scale = '1H,2H,3H...',histo = 'hour,minute,day',aggrigate = int,current = false,offWatchFired = 0,1,2]
-      const squeezetimes = coin.scale.map((item, scaleIndex)=> {
-        return (
-          <TouchableHighlight key={scaleIndex} style={(item[3]) ? styles.squeezetimeselected : styles.squeezetime} onPress={() => this.updateCoin(coin.fsym,coin.tsym, item[1], item[2], coinIndex, scaleIndex)}>
-            <Text style={styles.squeezetimetext}>{item[0]}</Text>
-          </TouchableHighlight>
-        )
-      })
-
-      const histo = coin.histo.slice(20,80)
-
-      let largest = Math.max.apply(Math, histo.map(candle => candle.high))
-      let smallest = Math.min.apply(Math, histo.map(candle => candle.low))
-
-
-      //const closes = coin.histo.map(candle => candle.close)
-      // const stdev = Object.values(closes.map((close,i) => stats.stdev(closes.slice(i,-20)))).slice(0,60)
-      // const ma = sma(Object.values(closes), 20).slice(0,60)
-      // const multKC = 1.5
-      
-      const range = largest - smallest
-
-      const candleWidth = (this.state.deviceWidth > 1200) ? (this.state.deviceWidth/3)/65 : this.state.deviceWidth/65
-
-      const chart = histo.map((candle,i) => {
-
-        const date = moment.unix(candle.time)
-        var formattedtime = date.format("MMM D H:mm")
-
-        const color = candle.open > candle.close ? '#df4b7a' : '#48ea61'
-        const wicktop = ((largest - candle.high)/range)*200
-        const wickbottom = ((largest - candle.low)/range)*200
-        const candletop = ((largest - (candle.open < candle.close ? candle.close : candle.open))/range)*200
-        const candlebottom = ((largest - (candle.open > candle.close ? candle.close : candle.open))/range)*200
-        const height =  candlebottom - candletop
-
-        return (
-          <g key={i} transform="translate(0,12)">
-          <rect className="candle" style={{ fill:color,strokeMiterLimit:10}} x={(candleWidth*i)} y={candletop} width={candleWidth/2} height={height}/>
-          <line className="wick" style={{ stroke:color,strokeMiterLimit:10}} x1={(candleWidth*i)+(candleWidth/4)} y1={wickbottom} x2={(candleWidth*i)+(candleWidth/4)} y2={wicktop}/>
-          <rect className="time"  style={{ strokeMiterLimit:10}} 
-                                  x={(candleWidth*i)} 
-                                  y={0} 
-                                  width={candleWidth} 
-                                  height={200} 
-                                  onMouseEnter={() => this.overCandle((coin.tsym === 'BTC') ? Number(candle.close).toFixed(8) : Number(candle.close).toFixed(2), coinIndex, candle.time)}
-                                  onMouseLeave={() => this.overCandle( (coin.tsym === 'BTC') ? coin.current.price_btc : Number(coin.current.price).toFixed(2), coinIndex, '')} />
-          <line className="timeline" style={{ strokeMiterLimit:10}} x1={(candleWidth*i)+(candleWidth/4)} y1={200} x2={(candleWidth*i)+(candleWidth/4)} y2={4}/>
-          <text className="text" x={(i > histo.length/2) ? (candleWidth*i)-58 : (candleWidth*i)} y="0" >{formattedtime}</text>
-          {/* "dddd, mmmm dS, yyyy, h:MM:ss" */}
-          </g>
-        )
-      })
-      
-      // const upper = histo.map((candle,i) => {
-
-      //   const dev = multKC * stdev[i]
-      //   const upperBB = parseFloat(ma[i]) + parseFloat(dev)        
-      //   const upperBBpos = ((largest - upperBB)/range)*200
-        
-      //   return (candleWidth*i).toString() + ' ' + upperBBpos.toString()        
-      // })
-
-      // const lower = histo.map((candle,i) => {
-
-      //   const dev = multKC * stdev[i]
-      //   const lowerBB = parseFloat(ma[i]) - parseFloat(dev)
-      //   const lowerBBpos = ((largest - lowerBB)/range)*200
-        
-      //   return (candleWidth*i).toString() + ' ' + lowerBBpos.toString()        
-      // }).reverse()
-      // //console.log(lower)
-
-      const symbol = (coin.tsym === 'USD') ? '$' : '฿' 
-
+    const griditems = sorteddata.map((coin, coinIndex) => {
       return (
-        <View className="coin" style={[styles.coinbox, {width: (this.state.deviceWidth > 1200) ? '33.33333333%':'100%'}]} key={coinIndex}>
-          <View className={'coin-background '+((coin.current.percent_change_24h > 0) ? 'green' : 'red')} />
-          <View className={'coin-gradient'} />
-          <View style={[(coin.current.percent_change_24h > 0) ? styles.indicatorfire : styles.indicatorwatch]}></View>
-          <View style={styles.squeezetimewrap}>
-            {squeezetimes}
-          </View>
-          <View style={styles.boxbody}>
-            <View style={styles.coininfo}>
-              <View style={styles.coinname}>
-                <Text style={styles.coinnametext}>{coin.fsym}</Text><Text style={styles.coinnamepairtext}>{'/'+coin.tsym}</Text>
-              </View>
-              <View style={styles.coinprice}>
-                <Text style={styles.coinpricetext}>{symbol+((coin.coinprice === 0) ? (coin.tsym === 'BTC') ? coin.current.price_btc : formatCurrency(coin.current.price) : (coin.tsym === 'BTC') ? coin.coinprice : formatCurrency(coin.coinprice))}</Text>
-                <Text style={styles.coinlabelright}>Last trade price</Text>
-              </View>
-            </View>
-            <View style={styles.coininfo}>
-              <View style={styles.coinpricechange}>
-                <Text style={[styles.coinpricechangetext,{color:(coin.current.percent_change_24h > 0) ? '#48ea61' : '#df4b7a'}]}>{ ((coin.current.percent_change_24h > 0) ? '+' : '') + Number(coin.current.percent_change_24h).toFixed(2)+'%'}</Text>
-                <Text style={styles.coinlabel}>24 hour price</Text>
-              </View>
-              <View style={styles.coinprice}>
-                <Text style={styles.coinpricetext}>{'$'+formatCurrency(coin.current.volume).split('.')[0]}</Text>
-                <Text style={styles.coinlabelright}>24 hour volume</Text>
-              </View>
-            </View>
-            <View style={{width:'100%',height:'240px',flex: 1,flexDirection: 'row',position: 'relative'}}>
-              <svg className="shadow chart" style={{position:'absolute', left:0, top:20, width:'100%', height:'100%'}}>{chart}</svg>
-              {/* <svg style={{position:'absolute', left:0, top:20, width:'100%', height:'100%'}}>
-                <polygon fill="none" stroke="white" points={lower + ',' + upper} />
-              </svg> */}
-            </View>
-            <Text style={styles.text}>{'rank: '+ coin.current.rank}</Text>
-          </View>
-        </View>
+        <Coin
+          key={coinIndex}
+          coin={coin}
+          coinIndex={coinIndex} 
+          deviceWidth={this.state.deviceWidth}
+          scales={this.state.scales}
+          current={this.state.current}
+          fullwidth={false}
+          count={COUNT}  />
       )
     })
+
+    const Wrapper = styled.div`
+      margin: 0 auto;
+      min-height:100vh;
+      display: flex;
+      flex-direction:column;
+    `
+
+    const Header = styled.div`
+      padding: 10px;
+      position:relative;
+      z-index:9;
+      box-sizing:border-box;
+    `
+    const HeaderText = styled.div`
+      font-size: 2em;
+      text-transform: uppercase;
+      font-style: italic;
+      font-weight: 700;
+      letter-spacing: 3px;
+      font-family: 'Exo 2', Arial, san-serif;
+    `
+
+    const SqueezeTimeWrap = styled.div`
+      display:flex;
+      flex-direction: row;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      height:24px;
+    `
+
+    const Grid = styled.div`
+      flex:1;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      padding:5px;
+    `
 
     return (
-      <View style={styles.box}>
-        <View style={[styles.wrapper,{width: (this.state.deviceWidth+'px' ? this.state.deviceWidth+'px' : '1400px'),}]}>
-          <View style={styles.header}>
-            <Text style={styles.headertext}>Squeeze Watch</Text>
-            <View style={styles.squeezetimewrap}>{globalsqueezetimes}</View>
-          </View>
-          <View style={styles.grid}>
+        <Wrapper>
+          <Header>
+            <HeaderText>Squeeze Watch</HeaderText>
+            <SqueezeTimeWrap>{globalsqueezetimes}</SqueezeTimeWrap>            
+            <Select.Async 
+              multi={true} 
+              onChange={this.onChange} 
+              onValueClick={this.gotoCoin} 
+              valueKey="symbol" 
+              labelKey="name" 
+              loadOptions={this.getCoins} 
+              backspaceRemoves={true}
+              name="form-field-name"
+              value={this.state.value}
+            />  
+          </Header>
+          <Grid>
             {griditems}
-          </View>
-        </View>
-      </View>
+          </Grid>
+        </Wrapper>
     );
   }
 }
 
-
-const styles = StyleSheet.create({
-  box: { 
-    alignItems: 'center',
-    padding: 20,
-  },
-  wrapper: {
-    margin: '0 auto',
-  },
-  header: {
-    padding: '10px'
-  },
-  headertext: {
-    fontSize: '2em',
-    textTransform: 'uppercase',
-    fontStyle: 'italic',
-    fontWeight: '700',
-    letterSpacing: '3px',
-    fontFamily: 'Exo 2'
-  },
-  grid: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    flexWrap: 'wrap',
-  },
-  coinbox: {
-    backgroundColor: 'rgba(242,266,247,0.07)',
-    borderWidth:'10px',
-    borderColor: '#15151e'
-  },
-  boxbody: {
-    padding: '10px',
-    
-  },
-  text: {
-    fontSize: '0.9em',
-    width: 'auto'
-  },
-  indicatorwatch: {
-    height:'10px',
-    backgroundColor: '#df4b7a'
-  },
-  indicatorfire: {
-    height:'10px',
-    backgroundColor: '#48ea61'
-  },
-  squeezetimewrap: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    flexWrap: 'wrap',
-  },
-  squeezetime: {
-    alignItems: 'center',
-    width: '11.11111111%',
-    padding: '4px',
-  },
-  squeezetimeselected:{
-    alignItems: 'center',
-    width: '11.11111111%',
-    padding: '4px',
-    borderBottomWidth:'2px',
-    borderColor: 'white'
-  },
-  coininfo:{
-    flex: 1,
-    flexDirection: 'row',
-  },
-  coinname: {
-    flex: 1, 
-    flexDirection: 'row',
-    width: '50%'
-  },
-  coinprice: {
-    width: '50%',
-  },
-  coinpricechange: {
-    width: '50%',
-  },
-  coinpricechangetext: {
-    paddingTop: '5px',
-    fontSize: '1.8em',
-    fontFamily: 'Exo 2'
-  },
-  coinlabel: {
-    fontSize: '0.7em',
-    fontFamily: 'Exo 2'
-  },
-  coinlabelright: {
-    fontSize: '0.7em',
-    fontFamily: 'Exo 2',
-    textAlign: 'right'
-  },
-  coinpricetext: {
-    paddingTop: '5px',
-    fontSize: '1.8em',
-    fontFamily: 'Exo 2',
-    fontWeight: '700',
-    textAlign: 'right'
-
-
-  },
-  coinnametext: {
-    fontSize: '3.2em',
-    fontWeight: '700',
-    width: 'auto',
-    letterSpacing: '3px',
-    display: 'inline-block',
-    fontFamily: 'Exo 2'
-  },
-  coinnamepairtext: {
-    paddingTop: '32px',
-    fontSize: '1em',
-    width: 'auto',
-    display: 'inline-block',
-    fontFamily: 'Exo 2'
-  }
-});
 
 AppRegistry.registerComponent('App', () => App);
 AppRegistry.runApplication('App', { rootTag: document.getElementById('root') });

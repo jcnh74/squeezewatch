@@ -20,87 +20,21 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>Squeeze Watch</title>
+    <link href="https://fonts.googleapis.com/css?family=Exo+2:500,500i" rel="stylesheet">
+
     <style>
-      /* cyrillic */
-@font-face {
-  font-family: 'Exo 2';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Exo 2'), local('Exo2-Regular'), url(https://fonts.gstatic.com/s/exo2/v4/7cHmv4okm5zmbtYsK-4W4nIppT4.woff2) format('woff2');
-  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
-}
-/* latin-ext */
-@font-face {
-  font-family: 'Exo 2';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Exo 2'), local('Exo2-Regular'), url(https://fonts.gstatic.com/s/exo2/v4/7cHmv4okm5zmbtYmK-4W4nIppT4.woff2) format('woff2');
-  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-/* latin */
-@font-face {
-  font-family: 'Exo 2';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Exo 2'), local('Exo2-Regular'), url(https://fonts.gstatic.com/s/exo2/v4/7cHmv4okm5zmbtYoK-4W4nIp.woff2) format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-/* cyrillic */
-@font-face {
-  font-family: 'Exo 2';
-  font-style: normal;
-  font-weight: 500;
-  src: local('Exo 2 Medium'), local('Exo2-Medium'), url(https://fonts.gstatic.com/s/exo2/v4/7cHrv4okm5zmbt7bCPs_wH8DnzcjTrA.woff2) format('woff2');
-  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
-}
-/* latin-ext */
-@font-face {
-  font-family: 'Exo 2';
-  font-style: normal;
-  font-weight: 500;
-  src: local('Exo 2 Medium'), local('Exo2-Medium'), url(https://fonts.gstatic.com/s/exo2/v4/7cHrv4okm5zmbt7bCPs1wH8DnzcjTrA.woff2) format('woff2');
-  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-/* latin */
-@font-face {
-  font-family: 'Exo 2';
-  font-style: normal;
-  font-weight: 500;
-  src: local('Exo 2 Medium'), local('Exo2-Medium'), url(https://fonts.gstatic.com/s/exo2/v4/7cHrv4okm5zmbt7bCPs7wH8Dnzcj.woff2) format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-/* cyrillic */
-@font-face {
-  font-family: 'Exo 2';
-  font-style: normal;
-  font-weight: 700;
-  src: local('Exo 2 Bold'), local('Exo2-Bold'), url(https://fonts.gstatic.com/s/exo2/v4/7cHrv4okm5zmbt6TDvs_wH8DnzcjTrA.woff2) format('woff2');
-  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
-}
-/* latin-ext */
-@font-face {
-  font-family: 'Exo 2';
-  font-style: normal;
-  font-weight: 700;
-  src: local('Exo 2 Bold'), local('Exo2-Bold'), url(https://fonts.gstatic.com/s/exo2/v4/7cHrv4okm5zmbt6TDvs1wH8DnzcjTrA.woff2) format('woff2');
-  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-/* latin */
-@font-face {
-  font-family: 'Exo 2';
-  font-style: normal;
-  font-weight: 700;
-  src: local('Exo 2 Bold'), local('Exo2-Bold'), url(https://fonts.gstatic.com/s/exo2/v4/7cHrv4okm5zmbt6TDvs7wH8Dnzcj.woff2) format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
+
       body{
         background-color: #15151e; 
         color: #f2e2f7;
-        /* font-family: 'Avenir', sans-serif; */
+        /* font-family: 'Avenir; sans-serif; */
+        /* font-family: 'Exo 2'; */
+        font-weight: 500;
         
       }
       #root{
-        font-family: 'Exo 2', sans-serif !important;
+        /* font-family: 'Exo 2'; */
+        font-weight: 400;
       }
 
 
@@ -112,13 +46,29 @@ body{
 
 .coin{
   overflow:hidden;
-  position:relative;
+  flex: 1;
+
+    background-color: rgba(242,266,247,0.07);
+    border-width:10px;
+    border-color: #15151e;
+    position: relative;
+
 }
-.coin .shadow {
+.coin-wrap{
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top:0;
+  right:0;
+  bottom:0;
+  left:0;
+  height:100%;
+}
+.coin .candlesticks {
   transition: filter 0.3s;
-    filter: drop-shadow( 0px 0px 16px rgba(223, 75, 122,0.5) );
+    filter: drop-shadow( 0px 0px 16px rgba(223, 75, 122,1) );
 }
-.coin:hover .shadow {
+.coin:hover .candlesticks {
     filter: drop-shadow(  0px 0px 6px rgba(0,0,0,0.7) );
 }
 
@@ -141,6 +91,13 @@ body{
   animation: throughSpace 20s linear;
   animation-iteration-count: infinite;
 }
+.fullwidth, .settings{
+  opacity:0 !important;
+  transition: opacity 0.15s;
+}
+.coin:hover .fullwidth, .coin:hover .settings{
+  opacity:0.5 !important;
+}
 .red{
   background-image: linear-gradient(#df4b7a 0.4px, transparent 0.6px), linear-gradient(90deg, #df4b7a 0.4px, transparent 0.6px);
 }
@@ -160,6 +117,10 @@ body{
   cursor: crosshair;
 }
 
+.volume{
+  opacity:0.5;
+}
+
 .time + .timeline{
   stroke:transparent;
   pointer-events: none;
@@ -177,6 +138,9 @@ body{
   font-size:12px;
 }
 
+.st0{fill:url(#SVGID_1_);stroke:#000000;stroke-miterlimit:10;}
+.st1{fill:url(#SVGID_2_);stroke:#000000;stroke-miterlimit:10;}
+
 
 @keyframes throughSpace{
   0%{
@@ -186,6 +150,206 @@ body{
     transform: perspective(300px) rotateX(80deg) translateY(0%);
   }
 }
+
+
+
+
+#root{
+  min-height:100vh;
+  color:white;
+}
+ .box{ 
+    align-items: center;
+    padding: 20;
+  }
+
+  .grid{
+    flex:1;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+
+  .boxbody{
+    padding: 10px;
+    flex:1;
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .text{
+    font-size: 0.9em;
+    width: auto;
+  }
+  .indicatorwatch{
+    height:10px;
+    background-color: #df4b7a;
+  }
+  .indicatorfire {
+    height:'10px';
+    background-color: #48ea61;
+  }
+
+
+  .coininfo{
+    width:50%;
+    display:flex;
+    flex-direction: row;
+    height:100px;
+  }
+  .coinname{
+    display:flex;
+    flex-direction: row;
+    width: 50%;
+  }
+  .coinprice{
+    width: 50%;
+  }
+  .coinpricechange{
+    width: 50%;
+  }
+  coinpricechangetext{
+    padding-top: 5px;
+    font-size: 1.8em;
+    font-family: 'Exo 2', Arial, san-serif;
+  }
+  coinlabe{
+    font-size: 0.7em;
+    font-family: 'Exo 2', Arial, san-serif;
+  },
+  coinlabelright {
+    font-size: 0.7em;
+    font-family: 'Exo 2', Arial, san-serif;
+    text-align: right;
+  },
+  .coinpricetext{
+    padding-top: 5px;
+    font-size: 1.8em;
+    font-family: Exo 2;
+    font-weight: 700;
+    text-align: right
+
+  }
+  .coinnametext{
+    font-size: 3.2em;
+    font-weight: 700;
+    width: auto;
+    letter-spacing: 3px;
+    display: inline-block;
+    font-family: 'Exo 2', Arial, san-serif;
+  }
+  .coinnamepairtext {
+    padding-top: 32px;
+    font-size: 1em;
+    width: auto;
+    display: inline-block;
+    font-family: 'Exo 2', Arial, san-serif;
+  }
+
+
+
+
+
+
+
+
+  .squeezetime{
+    align-items: center;
+    flex:1;
+    padding: 4px;
+  }
+  .squeezetimeselected{
+    align-items: center;
+    flex:1;
+    padding: 4px;
+    border-bottom-width:2px;
+    border-color: white;
+  }
+  .coininfo{
+    display:flex;
+    flex-direction: row;
+  }
+  .coinname{
+    display:flex;
+    flex-direction: row;
+    width: 50%;
+  }
+  .coinprice{
+    width: 50%;
+  }
+  .coinpricechange{
+    width: 50%;
+  }
+  .coinpricechangetext{
+    padding-top: 5px;
+    font-size: 1.8em;
+    font-family: 'Exo 2', Arial, san-serif;
+  }
+  .coinlabel{
+    font-size: 0.7em;
+    font-family: 'Exo 2', Arial, san-serif;
+  }
+  .coinlabelright{
+    font-size: 0.7em;
+    font-family: Exo 2;
+    text-align: right;
+  }
+  .coinpricetext{
+    padding-top: 5px;
+    font-size: 1.8em;
+    font-family: Exo 2;
+    font-weight: 700;
+    text-align: right;
+
+
+  }
+  .coinnametext{
+    font-size: 3.2em;
+    font-weight: 700;
+    width: auto;
+    letter-spacing: 3px;
+    display: inline-block;
+    font-family: 'Exo 2', Arial, san-serif;
+  }
+  .coinnamepairtext{
+    padding-top: 32px;
+    font-size: 1em;
+    width: auto;
+    display: inline-block;
+    font-family: 'Exo 2', Arial, san-serif;
+  }
+  .chartblock{
+    height:400px;
+    width:100vw;
+    flex:1;
+    display:flex;
+    flex-direction: column;
+    position: relative;
+  }
+  .histogramblock{
+    width:100%;
+    display:flex;
+    flex-direction: column;
+    position: relative
+  }
+  .chartrow{
+    height:240px;
+    display:flex;
+    flex-direction: row;
+    position: absolute;
+    top:-60px;
+    left:240px;
+    right:240px;
+    z-index:-1;
+  }
+  .hide{display: none;}
+
+
+
+
+
+
+
 
     </style>
   </head>
