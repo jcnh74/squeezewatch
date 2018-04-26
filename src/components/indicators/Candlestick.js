@@ -3,9 +3,6 @@ import moment from 'moment'
 
 import styled from 'styled-components';
 
-
-const layout = 'grid'
-
 export default class Candlestick extends Component {
 
   constructor(props) {

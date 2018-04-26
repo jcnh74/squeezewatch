@@ -32,25 +32,22 @@ export default class TTMSqueeze extends Component {
 
     const display = this.props.display
     const length = this.props.length
-    const sample = this.props.sample
+    const batch = this.props.batch
     //console.log(this.props.histo.length - 1, this.props.limit)
 
     const candleWidth = boxwidth/display
     let chart = []
-    //console.log(this.props.histo.length,this.props.limit)
-    if(this.props.histo.length - 1 === sample){
+    
+    if(this.props.histo.length === batch){
         //console.log(this.props.histo.length - display,this.props.histo.length)
-        const histo = this.props.histo.slice(this.props.histo.length - display,this.props.histo.length)
-        const test = this.props.histo.slice(this.props.histo.length + 1 - (display + length),this.props.histo.length)
-
-
-        //console.log(this.props.histo)
+        const test = this.props.histo.slice(this.props.histo.length - (display + length), this.props.histo.length)
+        const histo = this.props.histo.slice(length, test.length)
 
         const closes = test.map(candle => candle.close)
 
         const keltner = kc(test, length, 1, false)
         const simpleMovingAverage = sma(closes, length); // [3, 4]
-        const exponentialMovingAverage = ema(closes, length); // [4, 4]
+        //const exponentialMovingAverage = ema(closes, length); // [4, 4]
         const bollinger = boll(closes, length, 2, true); // { upper: [], mid: [], lower: []}
         
 
@@ -63,53 +60,62 @@ export default class TTMSqueeze extends Component {
             var sum_y = 0
             var sum_xy = 0
             var sum_xx = 0
-            var sum_yy = 0
-    
+            var sum_yy = 0;
+
             for (var i = 0; i < y.length; i++) {
-    
                 sum_x += x[i]
                 sum_y += y[i]
                 sum_xy += (x[i]*y[i])
                 sum_xx += (x[i]*x[i])
-                sum_yy += (y[i]*y[i])
-
+                sum_yy += (y[i]*y[i]);
             } 
+
+            //( sum(y) * sum(x^2) - sum(x) * sum(x*y) ) / (n*sum(x^2)-sum(x)^2)
+            lr['lr'] = ( sum_y * sum_xx - sum_x * sum_xy ) / (n * sum_xx - (sum_x * sum_x))
             lr['slope'] = (n * sum_xy - sum_x * sum_y) / (n*sum_xx - sum_x * sum_x)
-            lr['intercept'] = (sum_y - lr.slope * sum_x)/n
+            lr['intercept'] = (sum_y - lr.slope * sum_x) / n
+            lr['r2'] = Math.pow((n*sum_xy - sum_x*sum_y)/Math.sqrt((n*sum_xx-sum_x*sum_x)*(n*sum_yy-sum_y*sum_y)),2);
+
             return lr
         }
 
         //const yCloses = this.props.histo.map(candle => candle.close)
-        const _sma = sma(closes, length)
-        console.log(_sma.length)
+        //const _sma = sma(closes, length)
 
+        //console.log(simpleMovingAverage)
+        
         const e1 = histo.map((can,i) => {
-            
-            const highest = Math.max.apply(null, this.props.histo.slice(sample - display - length + i, sample - display + i).map(candle => candle.high))
-            const lowest = Math.min.apply(null, this.props.histo.slice(sample - display - length + i, sample - display + i).map(candle => candle.low))
-            const output = (highest + lowest)/2 + _sma[i]
+            const from = batch - (display + length) + i
+            const to = batch - display + i
+            const highest = Math.max.apply(null, this.props.histo.slice(from, to).map(candle => candle.high))
+            const lowest = Math.min.apply(null, this.props.histo.slice(from, to).map(candle => candle.low))
+            //const _sma = sma(this.props.histo.slice(batch - (display + display + length - 1) + i, batch - display + i).map(candle => candle.close), length)
+            const output = (highest + lowest + simpleMovingAverage[i])/3
 
             return output
         })
 
+        //console.log(e1)
 
-        const arr = Array.from(Array(length), (_,x) => (length - 1 - x) * (((length - 1 - x) === 0 ) ? 1 : -1))
+        const input_x = Array.from(Array(length), (_,x) => (length - 1 - x) * (((length - 1 - x) === 0 ) ? 1 : -1))
+        //const input_x = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20].reverse()
+        // histo is only the display data where this.props.histo is the batch data
         
-        // histo is only the display data where this.props.histo is the sample data
         const osc = histo.map((can,i) => {
-            const lg = linearRegression(arr, this.props.histo
-                .slice(sample - display - length + i, sample - display + i)
-                .map((histo,i) => ((histo.close - e1[i])/2))
-            )
-            return lg.intercept + lg.slope * (length - 1 - i)
+            //console.log(e1[i])
+            const input_y = this.props.histo
+            .slice(batch - (display + length) + i, batch - display + i)
+            .map((histo,i) => histo.close - (e1[i]/2))
+            
+            const lg = linearRegression(input_y, input_x)
+            console.log(input_x, input_y)
+            return lg.slope
             
         })
-        const osc_color = osc.map((o,i) => {
-            return osc[i+1] < o ? o >= 0 ? '#009b9b' :  '#ff9bff' : o >= 0 ? '#00ffff' :'#cc00cc'
-        })
 
-        let largest = Math.max.apply(Math, osc.map(o => o < 0 ? o * -1 : o))
-        const range = largest*2
+
+        let largest = Math.max.apply(null, osc.map(o => o < 0 ? o * -1 : o))
+        //const range = largest * 2
         const bband = bollinger.upper.slice(bollinger.upper.length - display, bollinger.upper.length ).map((upper, i) => {
             return upper - bollinger.lower[i]
         })
@@ -121,15 +127,17 @@ export default class TTMSqueeze extends Component {
             //console.log(bband[i] < kelt[i])
             return bband[i] > kelt[i]
         })
-
+        
+        //console.log(largest, osc.map(o => o < 0 ? o * -1 : o))
         const ratio = 100/(largest*2)
 
-        
-
+        const osc_color = osc.map((o,i) => {
+            return osc[i-1] < o ? o >= 0 ? '#00ffff' : '#cc00cc' : o >= 0 ? '#009b9b' : '#ff9bff'
+        })
         
         chart = histo.map((candle,i) => {
             
-            const boxHeight = (osc[i] < 0 ? osc[i]*-1 : osc[i])*2
+            //const boxHeight = (osc[i] < 0 ? osc[i]*-1 : osc[i])*2
 
             const color = osc_color[i]
             const y1 = 50

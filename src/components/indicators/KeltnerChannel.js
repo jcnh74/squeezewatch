@@ -82,7 +82,7 @@ export default class KeltnerChannel extends Component {
 
     return (
         <Chart viewBox="0 0 400 200" preserveAspectRatio="none">
-            <path style={{ stroke:'rgba(41,171,226,0.3)',fill:'rgba(41,171,226,0.1)',strokeMiterLimit:10}} d={d}/>
+            <path style={{ stroke:'rgba(41,226,167,0.3)',fill:'rgba(41,226,226,0.1)',strokeMiterLimit:10}} d={d}/>
         </Chart>
       )
     }

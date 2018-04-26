@@ -1,6 +1,6 @@
 import React from 'react'
 import "typeface-exo"
-import { AppRegistry, Text, View, TouchableHighlight, Dimensions } from 'react-native'
+import { AppRegistry, Dimensions } from 'react-native'
 import Coin from'./components/Coin'
 
 import Select from 'react-select';
@@ -29,19 +29,19 @@ export default class App extends React.Component {
       coins:coinlist,
       deviceWidth: deviceWidth,
       scales:[
-        // ['1M','minute',1],
-        // ['5M','minute',5],
-        // ['15M','minute',15],
-        // ['30M','minute',30],
-        ['1H','hour',1],
-        ['2H','hour',2],
-        ['3H','hour',3],
-        ['4H','hour',4],
-        ['6H','hour',6],
-        ['8H','hour',8],
-        ['12H','hour',12],
-        ['1D','day',1],
-        ['1W','day',7]
+        // ['1M', 'minute', 1, 0],
+        // ['5M', 'minute', 5, 0],
+        // ['15M', 'minute', 15, 0],
+        // ['30M', 'minute', 30, 0],
+        ['1H', 'hour', 1, 1],
+        ['2H', 'hour', 2, 0],
+        ['3H', 'hour', 3, 0],
+        ['4H', 'hour', 4, 0],
+        ['6H', 'hour', 6, 0],
+        ['8H', 'hour', 8 ,0],
+        ['12H', 'hour', 12, 0],
+        ['1D', 'day', 1, 0],
+        ['1W', 'day', 7, 0]
       ],
       current:0,
       selectedOption: '',
@@ -49,7 +49,7 @@ export default class App extends React.Component {
     }
     
     const _this = this
-    _this.defaultCoinList('USD', COUNT)
+    _this.defaultCoinList('BTC', COUNT)
 
     
     // setInterval(function() {

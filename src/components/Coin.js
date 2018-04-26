@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import "typeface-exo"
-import { StyleSheet, Text, div, TouchableHighlight, AsyncStorage } from 'react-native'
 import formatCurrency from'format-currency'
 
 import styled, {keyframes} from 'styled-components';
@@ -34,7 +33,7 @@ export default class Coin extends Component {
       cointime: 0,
       fullwidth: this.props.fullwidth,
       settings: false,
-      sample: 200,
+      batch: 220,
       display: 100,
       length: 20
     }
@@ -72,7 +71,7 @@ export default class Coin extends Component {
   async getCoin(index) {
 
     const _fsym = (this.state.coin.fsym === 'MIOTA') ? 'IOT' : this.state.coin.fsym
-    const historyres = await fetch('https://min-api.cryptocompare.com/data/histo'+this.state.scales[index][1]+'?fsym='+_fsym+'&tsym='+this.state.coin.tsym+'&limit='+this.state.sample+'&aggregate='+this.state.scales[index][2]+'&e=CCCAGG')
+    const historyres = await fetch('https://min-api.cryptocompare.com/data/histo'+this.state.scales[index][1]+'?fsym='+_fsym+'&tsym='+this.state.coin.tsym+'&limit='+(this.state.batch-1)+'&aggregate='+this.state.scales[index][2]+'&e=CCCAGG')
     const histo = await historyres.json().then((data) => data)
 
     this.setState({
@@ -108,14 +107,28 @@ export default class Coin extends Component {
       settings: !this.state.settings
     },() => console.log(this.state.settings))
   }
+
+  setWatches(){
+
+  }
   
   render() {
 
     const squeezetimes = this.state.scales.map((item, scaleIndex)=> {
+      let watchstate = ''
+      if(item[3] === 0){
+        watchstate = ''
+      }else if(item[3] === 1){
+        watchstate = 'watch'
+      }else if(item[3] === 2){
+        watchstate = 'fired-long'
+      }else{
+        watchstate = ''
+      }
       return (
         <div 
           key={scaleIndex} 
-          className={(this.state.current === scaleIndex) ? 'squeezetimeselected' : 'squeezetime'} 
+          className={(this.state.current === scaleIndex) ? 'squeezetimeselected ' : 'squeezetime ' + watchstate} 
           style={[{width:100/this.state.scales.length}]} 
           onClick={() => this.updateCoin(scaleIndex)}>
           <div className={'squeezetimetext'}>{item[0]}</div>
@@ -124,7 +137,7 @@ export default class Coin extends Component {
     })
 
     const symbol = (this.props.coin.tsym === 'USD') ? '$' : '฿' 
-    const order = (this.state.fullwidth) ? ((this.props.coinIndex % 3 === 0) ? this.props.coinIndex : ((this.props.coinIndex % 3 === 1) ?  this.props.coinIndex - 2 :  ((this.props.coinIndex % 3 === 2) ?  this.props.coinIndex - 3 : this.props.coinIndex)) )   : this.props.coinIndex
+    //const order = (this.state.fullwidth) ? ((this.props.coinIndex % 3 === 0) ? this.props.coinIndex : ((this.props.coinIndex % 3 === 1) ?  this.props.coinIndex - 2 :  ((this.props.coinIndex % 3 === 2) ?  this.props.coinIndex - 3 : this.props.coinIndex)) )   : this.props.coinIndex
     //const order = (this.state.fullwidth) ? ((this.props.coinIndex === 1) ? -1 : this.props.coinIndex) : this.props.coinIndex
 
     const SqueezeTimeWrap = styled.div`
@@ -143,6 +156,22 @@ export default class Coin extends Component {
         transform: perspective(300px) rotateX(80deg) translateY(0%);
       }
     `
+    const CoinBackground = styled.div`
+      top: -400px;
+      bottom: -400px;
+      left: -400px;
+      right: -400px;
+      position: absolute;
+      background-size:1% 1%, 2% 2%;
+      background-position:0 0, 0 0;
+      animation: ${throughSpace} 20s linear;
+      animation-play-state: paused;
+      animation-iteration-count: infinite;
+      transition: top 0.3s, bottom 0.3s;
+      transform: perspective(300px) rotateX(80deg);
+      background-image: ${props => props.color === 'red' ? 'linear-gradient(#48ea61 0.4px, transparent 0.6px), linear-gradient(90deg, #48ea61 0.4px, transparent 0.6px);' : 'linear-gradient(#df4b7a 0.4px, transparent 0.6px), linear-gradient(90deg, #df4b7a 0.4px, transparent 0.6px);'}
+    `
+
     const CoinBox = styled.div`
       overflow:hidden;
       //flex: 1;
@@ -159,23 +188,7 @@ export default class Coin extends Component {
           animation-play-state: running;
         }  
     `
-    
-    const CoinBackground = styled.div`
-      top: -400px;
-      bottom: -400px;
-      left: -400px;
-      right: -400px;
-      position: absolute;
-      background-size:1% 1%, 2% 2%;
-      background-position:0 0, 0 0;
-      animation: ${throughSpace} 20s linear;
-      animation-play-state: paused;
-      animation-iteration-count: infinite;
-      transition: top 0.3s, bottom 0.3s;
-      transform: perspective(300px) rotateX(80deg);
-      background-image: ${props => props.color == 'red' ? 'linear-gradient(#48ea61 0.4px, transparent 0.6px), linear-gradient(90deg, #48ea61 0.4px, transparent 0.6px);' : 'linear-gradient(#df4b7a 0.4px, transparent 0.6px), linear-gradient(90deg, #df4b7a 0.4px, transparent 0.6px);'}
-    `
-    
+        
     const CoinGradient = styled.div`
       top: 0px;
       bottom: 0px;
@@ -205,7 +218,7 @@ export default class Coin extends Component {
 
     const Indicator = styled.div`
       height:10px;
-      background-color: ${props => props.color == 'red' ? '#48ea61;' : '#df4b7a;'}
+      background-color: ${props => props.color === 'red' ? '#48ea61;' : '#df4b7a;'}
     `
 
     const CoinInfo = styled.div`
@@ -265,7 +278,7 @@ export default class Coin extends Component {
       padding-top: 5px;
       font-size: 1.8em;
       font-family: 'Exo 2', Arial, san-serif;
-      color:${props => props.color == 'red' ? '#48ea61;' : '#df4b7a;'}
+      color:${props => props.color === 'red' ? '#48ea61;' : '#df4b7a;'}
     `
 
     const ChartBlock = styled.div`
@@ -353,21 +366,21 @@ export default class Coin extends Component {
                     coin={this.state.coin} 
                     display={this.state.display}
                     length={this.state.length}
-                    sample={this.state.sample}
+                    batch={this.state.batch}
                     histo={this.state.data.histo} 
                     className={(this.state.settings) ? 'hide' : ''} />
                   <KeltnerChannel 
                     coin={this.state.coin} 
                     display={this.state.display}
                     length={this.state.length}
-                    sample={this.state.sample}
+                    batch={this.state.batch}
                     histo={this.state.data.histo} 
                     className={(this.state.settings) ? 'hide' : ''} />
                   <Candlestick 
                     coin={this.state.coin} 
                     display={this.state.display}
                     length={this.state.length}
-                    sample={this.state.sample}
+                    batch={this.state.batch}
                     histo={this.state.data.histo} 
                     overCandle={(price, time) => this.overCandle(price, time)}
                     className={(this.state.settings) ? 'hide' : ''}
@@ -383,10 +396,18 @@ export default class Coin extends Component {
                       coin={this.state.coin} 
                       display={this.state.display}
                       length={this.state.length}
-                      sample={this.state.sample}
+                      batch={this.state.batch}
                       histo={this.state.data.histo} 
                       overCandle={(price, time) => this.overCandle(price, time)}
                       className={(this.state.settings) ? 'hide' : ''} />
+                  {/* <Volume 
+                      coin={this.state.coin} 
+                      display={this.state.display}
+                      length={this.state.length}
+                      sample={this.state.sample}
+                      histo={this.state.data.histo} 
+                      overCandle={(price, time) => this.overCandle(price, time)}
+                      className={(this.state.settings) ? 'hide' : ''} /> */}
                 </ChartWrap>
               </HistogramBlock>
             </BoxBody>
