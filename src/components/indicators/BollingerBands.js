@@ -51,12 +51,12 @@ export default class BollingerBands extends Component {
     let lowerPoints = '';
     bollinger.upper.forEach((boll,i) => {        
         const bollpoint = ((largest - boll)/range)*boxHeight
-        upperPoints =  upperPoints + ((i === 0) ? ' M' : ' L') + (candleWidth* i) + ' ' + bollpoint + ' '
+        upperPoints =  upperPoints + ((i === 0) ? ' M' : ' L') + (candleWidth * i + candleWidth/4) + ' ' + bollpoint + ' '
     })
     
     bollinger.lower.reverse().forEach((boll,i) => {
         const bollpoint = ((largest - boll)/range)*boxHeight
-        lowerPoints = lowerPoints + ' L' + (boxWidth - (candleWidth*(i + 1))) + ' ' + bollpoint + ' '
+        lowerPoints = lowerPoints + ' L' + (boxWidth - (candleWidth*(i + 1) - candleWidth/4)) + ' ' + bollpoint + ' '
     })
     const d =  (bollinger.upper.length) ? upperPoints  + lowerPoints + ' Z' : ''
 

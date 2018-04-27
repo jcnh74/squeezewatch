@@ -14,9 +14,10 @@ import styled, { css } from 'styled-components';
 // import stats from 'stats-lite'
 
 const coinlist = []
-const COUNT = 6
-const MAX_CONTRIBUTORS = 6;
-const ASYNC_DELAY = 500;
+const COUNT = 9
+const OFFSET = 9
+const MAX_CONTRIBUTORS = 6
+const ASYNC_DELAY = 500
 
 export default class App extends React.Component {
 
@@ -33,12 +34,12 @@ export default class App extends React.Component {
         // ['5M', 'minute', 5, 0],
         // ['15M', 'minute', 15, 0],
         // ['30M', 'minute', 30, 0],
-        ['1H', 'hour', 1, 1],
+        ['1H', 'hour', 1, 0],
         ['2H', 'hour', 2, 0],
         ['3H', 'hour', 3, 0],
         ['4H', 'hour', 4, 0],
         ['6H', 'hour', 6, 0],
-        ['8H', 'hour', 8 ,0],
+        ['8H', 'hour', 8, 0],
         ['12H', 'hour', 12, 0],
         ['1D', 'day', 1, 0],
         ['1W', 'day', 7, 0]
@@ -69,7 +70,7 @@ export default class App extends React.Component {
 
   async defaultCoinList(tsym, count){
 
-    const list = await fetch('https://api.coinmarketcap.com/v1/ticker/?limit='+count)
+    const list = await fetch('https://api.coinmarketcap.com/v1/ticker/?start='+OFFSET+'&limit='+count)
     const myCoins = await list.json().then((data) => data)
     this.setState({
       data:myCoins
@@ -110,7 +111,9 @@ export default class App extends React.Component {
     const data = Promise.all(
       value.map(async (i) => {
         const tsym = (i.symbol === 'BTC' ? 'USD' : 'BTC')
-        return await (await fetch('https://min-api.cryptocompare.com/data/generateAvg?fsym='+i.symbol+'&tsym='+tsym+'&e=CCCAGG')).json()
+        //const url = 'https://min-api.cryptocompare.com/data/generateAvg?fsym=POA&tsym=BTC&e=Binance'
+        const url = 'https://min-api.cryptocompare.com/data/generateAvg?fsym='+i.symbol+'&tsym='+tsym+'&e=CCCAGG'
+        return await (await fetch(url)).json()
       })
     )
     return data  
@@ -136,7 +139,7 @@ export default class App extends React.Component {
   }
   
   async updateAllCoins(scaleIndex){
-    console.log(scaleIndex)
+    //console.log(scaleIndex)
     this.setState({
       current: scaleIndex
     })
@@ -177,7 +180,6 @@ export default class App extends React.Component {
             percent_change_24h: coin.RAW.CHANGEPCT24HOUR
           }
         })
-        console.log(theCoins)
         if(theCoins.length > 0){
           this.setState({
             coins:theCoins,  

@@ -54,14 +54,14 @@ export default class KeltnerChannel extends Component {
     let upperPoints = '';
     keltner.upper.forEach((kelt,i) => {
         const keltpoint = ((largest - kelt)/range)*boxHeight
-        upperPoints =  upperPoints + ((i === 0) ? ' M' : ' L') + (candleWidth* i) + ' ' + keltpoint + ' '
+        upperPoints =  upperPoints + ((i === 0) ? ' M' : ' L') + (candleWidth* i + candleWidth/4) + ' ' + keltpoint + ' '
 
         //upperPoints =  upperPoints + ((i === 0) ? ' M ' : ' L ') + (candleWidth* (i - 1)) + ', ' + keltpoint + ' '
     })
     let lowerPoints = '';
     keltner.lower.reverse().forEach((kelt,i) => {
         const keltpoint = ((largest - kelt)/range)*boxHeight
-        lowerPoints = lowerPoints + ' L' + (boxWidth - (candleWidth*(i + 1))) + ' ' + keltpoint + ' '
+        lowerPoints = lowerPoints + ' L' + (boxWidth - (candleWidth*(i + 1) - candleWidth/4)) + ' ' + keltpoint + ' '
 
         //lowerPoints = lowerPoints + ' L ' + ((boxWidth - (candleWidth*i)) - candleWidth*4) + ', ' + keltpoint + ' '
     })
