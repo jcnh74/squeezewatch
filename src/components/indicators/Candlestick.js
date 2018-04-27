@@ -27,7 +27,6 @@ export default class Candlestick extends Component {
 
     const histo = this.props.histo.slice(this.props.histo.length - display,this.props.histo.length)
 
-    //console.log(histo)
 
     let largest = Math.max.apply(Math, histo.map(candle => candle.high))
     let smallest = Math.min.apply(Math, histo.map(candle => candle.low))

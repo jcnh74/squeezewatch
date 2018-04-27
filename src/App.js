@@ -14,8 +14,8 @@ import styled, { css } from 'styled-components';
 // import stats from 'stats-lite'
 
 const coinlist = []
-const COUNT = 9
-const OFFSET = 9
+const COUNT = 6
+const OFFSET = 0
 const MAX_CONTRIBUTORS = 6
 const ASYNC_DELAY = 500
 
@@ -109,10 +109,10 @@ export default class App extends React.Component {
     //https://min-api.cryptocompare.com/data/generateAvg?fsym=BTC&tsym=USD&e=CCCAGG
     
     const data = Promise.all(
-      value.map(async (i) => {
-        const tsym = (i.symbol === 'BTC' ? 'USD' : 'BTC')
+      value.map(async (pair) => {
+        const tsym = (pair.symbol === 'BTC' ? 'USD' : 'BTC')
         //const url = 'https://min-api.cryptocompare.com/data/generateAvg?fsym=POA&tsym=BTC&e=Binance'
-        const url = 'https://min-api.cryptocompare.com/data/generateAvg?fsym='+i.symbol+'&tsym='+tsym+'&e=CCCAGG'
+        const url = 'https://min-api.cryptocompare.com/data/generateAvg?fsym='+pair.symbol+'&tsym='+tsym+'&e=CCCAGG'
         return await (await fetch(url)).json()
       })
     )

@@ -6,7 +6,7 @@ import styled, {keyframes} from 'styled-components';
 
 import Candlestick from'./indicators/Candlestick'
 //import HeikinAshiCandlestick from'./indicators/HeikinAshiCandlestick'
-//import Volume from'./indicators/Volume'
+import Volume from'./indicators/Volume'
 import BollingerBands from './indicators/BollingerBands'
 import KeltnerChannel from'./indicators/KeltnerChannel'
 import keltnerchannel from 'keltnerchannel'
@@ -115,8 +115,6 @@ export default class Coin extends Component {
       const simpleMovingAverage = sma(closes, this.state.length); // [3, 4]
       //const exponentialMovingAverage = ema(closes, length); // [4, 4]
       const bollinger = boll(closes, this.state.length, 2, true); // { upper: [], mid: [], lower: []}
-      
-
 
       const linearRegression = (y,x) => {
         
@@ -366,7 +364,7 @@ export default class Coin extends Component {
       overflow:hidden;
       //flex: 1;
       flex: 1 0 30%;
-      background-color: rgba(242,266,247,0.07);
+      //background-color: rgba(242,266,247,0.07);
       border-width:10px;
       border-color: #15151e;
       position: relative;
@@ -553,6 +551,13 @@ export default class Coin extends Component {
               </CoinInfoWrap>
               <ChartBlock>
                 <ChartWrap>
+                  <Volume 
+                    coin={this.state.coin} 
+                    display={this.state.display}
+                    length={this.state.length}
+                    sample={this.state.sample}
+                    histo={this.state.scales[this.state.current][4]} 
+                    className={(this.state.settings) ? 'hide' : ''} />
                   <BollingerBands 
                     coin={this.state.coin} 
                     display={this.state.display}
@@ -593,13 +598,7 @@ export default class Coin extends Component {
                       osc={this.state.scales[this.state.current][5]}
                       diff={this.state.scales[this.state.current][6]}
                       className={(this.state.settings) ? 'hide' : ''} />
-                  {/* <Volume 
-                      coin={this.state.coin} 
-                      display={this.state.display}
-                      length={this.state.length}
-                      sample={this.state.sample}
-                      histo={this.state.scales[this.state.current][4]} 
-                      className={(this.state.settings) ? 'hide' : ''} /> */}
+                  
                 </ChartWrap>
               </HistogramBlock>
             </BoxBody>
