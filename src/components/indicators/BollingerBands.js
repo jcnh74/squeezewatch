@@ -51,12 +51,16 @@ export default class BollingerBands extends Component {
     let lowerPoints = '';
     bollinger.upper.forEach((boll,i) => {        
         const bollpoint = ((largest - boll)/range)*boxHeight
-        upperPoints =  upperPoints + ((i === 0) ? ' M' : ' L') + (candleWidth * i + candleWidth/4) + ' ' + bollpoint + ' '
+          upperPoints =  upperPoints + ((i === 0) ? ' M -' + candleWidth/4 + 0.5 + ' ' + bollpoint + ' ' : ' L') + 
+          (candleWidth * i + candleWidth/4) + ' ' + bollpoint + ' ' + 
+          ((i === bollinger.upper.length -1 ) ? ' L ' + (candleWidth * (i+1) + candleWidth/4) + 0.5 +' ' + bollpoint : '')
     })
     
     bollinger.lower.reverse().forEach((boll,i) => {
         const bollpoint = ((largest - boll)/range)*boxHeight
-        lowerPoints = lowerPoints + ' L' + (boxWidth - (candleWidth*(i + 1) - candleWidth/4)) + ' ' + bollpoint + ' '
+          lowerPoints = lowerPoints + ((i === 0) ? ' L ' + (boxWidth - (candleWidth*(i) - candleWidth/4)) +  0.5 + ' ' + bollpoint + ' ' : ' L ') + 
+          (boxWidth - (candleWidth*(i + 1) - candleWidth/4)) + ' ' + bollpoint + ' ' + 
+          ((i === bollinger.upper.length -1 ) ? ' L ' + (boxWidth - (candleWidth*(i + 1) + candleWidth/4)) +  0.5 + ' ' + bollpoint : '')
     })
     const d =  (bollinger.upper.length) ? upperPoints  + lowerPoints + ' Z' : ''
 
@@ -73,7 +77,7 @@ export default class BollingerBands extends Component {
 
     return (
         <Chart viewBox="0 0 400 200" preserveAspectRatio="none">
-            <path transform="translate(0,12)" style={{ stroke:'rgba(41,171,226,0.3)',fill:'rgba(41,171,226,0.1)',strokeMiterLimit:10}} d={d}/>
+            <path style={{ stroke:'rgba(41,171,226,0.3)',fill:'rgba(41,171,226,0.1)',strokeMiterLimit:10}} d={d}/>
         </Chart>
       )
     }

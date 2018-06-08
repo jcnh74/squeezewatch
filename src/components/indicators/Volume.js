@@ -31,8 +31,6 @@ export default class Line extends Component {
     
     const range = largest - smallest
 
-    
-
     const candleWidth = 400/histo.length
 
     const details = histo.map((candle,i) => {
@@ -41,7 +39,7 @@ export default class Line extends Component {
 
         return (
             <rect key={i} className="volume" style={{ fill:color,strokeMiterLimit:10}} 
-                x={(candleWidth*i)+(candleWidth/4)} 
+                x={(candleWidth*i)} 
                 y={(200-((candle.volumefrom * 0.5)/range)*200)} 
                 width={candleWidth/2} 
                 height={((candle.volumefrom * 0.5)/range)*200} />
@@ -52,14 +50,12 @@ export default class Line extends Component {
         opacity:0.3;
         position:absolute;
         bottom:0;
-        left:-${candleWidth/4}px;
+        left:0;
         width:100%;
         height:50%;
         padding: 0;
         box-sizing:border-box;
     `
-
-    
 
     return (
         <Volume viewBox="0 0 400 200" preserveAspectRatio="none">

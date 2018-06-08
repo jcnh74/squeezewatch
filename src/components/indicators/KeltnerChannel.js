@@ -54,17 +54,35 @@ export default class KeltnerChannel extends Component {
     let upperPoints = '';
     keltner.upper.forEach((kelt,i) => {
         const keltpoint = ((largest - kelt)/range)*boxHeight
-        upperPoints =  upperPoints + ((i === 0) ? ' M' : ' L') + (candleWidth* i + candleWidth/4) + ' ' + keltpoint + ' '
+        upperPoints =  upperPoints + ((i === 0) ? ' M -' + candleWidth/4 + 0.5 + ' ' + keltpoint + ' ' : ' L') + 
+        (candleWidth * i + candleWidth/4) + ' ' + keltpoint + ' ' + 
+        ((i === keltner.upper.length -1 ) ? ' L ' + (candleWidth * (i+1) + candleWidth/4) + 0.5 + ' ' + keltpoint : '')
 
         //upperPoints =  upperPoints + ((i === 0) ? ' M ' : ' L ') + (candleWidth* (i - 1)) + ', ' + keltpoint + ' '
     })
     let lowerPoints = '';
     keltner.lower.reverse().forEach((kelt,i) => {
         const keltpoint = ((largest - kelt)/range)*boxHeight
-        lowerPoints = lowerPoints + ' L' + (boxWidth - (candleWidth*(i + 1) - candleWidth/4)) + ' ' + keltpoint + ' '
+        lowerPoints = lowerPoints + ((i === 0) ? ' L ' + (boxWidth - (candleWidth*(i) - candleWidth/4)) + 0.5 + ' ' + keltpoint + ' ' : ' L ') + 
+        (boxWidth - (candleWidth*(i + 1) - candleWidth/4)) + ' ' + keltpoint + ' ' + 
+        ((i === keltner.upper.length -1 ) ? ' L ' + (boxWidth - (candleWidth*(i + 1) + candleWidth/4)) + 0.5 + ' ' + keltpoint : '')
 
         //lowerPoints = lowerPoints + ' L ' + ((boxWidth - (candleWidth*i)) - candleWidth*4) + ', ' + keltpoint + ' '
     })
+
+  //   bollinger.upper.forEach((boll,i) => {        
+  //     const bollpoint = ((largest - boll)/range)*boxHeight
+  //       upperPoints =  upperPoints + ((i === 0) ? ' M -' + candleWidth/4 + ' ' + bollpoint + ' ' : ' L') + 
+  //       (candleWidth * i + candleWidth/4) + ' ' + bollpoint + ' ' + 
+  //       ((i === bollinger.upper.length -1 ) ? ' L ' + (candleWidth * (i+1) + candleWidth/4) + ' ' + bollpoint : '')
+  // })
+  
+  // bollinger.lower.reverse().forEach((boll,i) => {
+  //     const bollpoint = ((largest - boll)/range)*boxHeight
+  //       lowerPoints = lowerPoints + ((i === 0) ? ' L ' + (boxWidth - (candleWidth*(i) - candleWidth/4)) + ' ' + bollpoint + ' ' : ' L ') + 
+  //       (boxWidth - (candleWidth*(i + 1) - candleWidth/4)) + ' ' + bollpoint + ' ' + 
+  //       ((i === bollinger.upper.length -1 ) ? ' L ' + (boxWidth - (candleWidth*(i + 1) + candleWidth/4)) + ' ' + bollpoint : '')
+  // })
 
     const Chart = styled.svg`
       position:absolute;

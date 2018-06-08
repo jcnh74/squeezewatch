@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import "typeface-exo"
 import formatCurrency from'format-currency'
+import keltnerchannel from 'keltnerchannel'
 
 import styled, {keyframes} from 'styled-components';
 
@@ -9,9 +10,9 @@ import Candlestick from'./indicators/Candlestick'
 import Volume from'./indicators/Volume'
 import BollingerBands from './indicators/BollingerBands'
 import KeltnerChannel from'./indicators/KeltnerChannel'
-import keltnerchannel from 'keltnerchannel'
-
 import TTMSqueeze from'./indicators/TTMSqueeze'
+//import Line from'./indicators/Line'
+//import RSI from'./indicators/RSI'
 
 const kc = keltnerchannel.kc
 const sma = keltnerchannel.sma
@@ -23,8 +24,7 @@ const darkpuple = "#cc00cc"
 const darkblue = "#009b9b"
 const lightpurple = "#ff9bff"
 
-
-//import Line from'./indicators/Line'
+const ASYNC_DELAY = 1000
 
 
 
@@ -39,7 +39,7 @@ export default class Coin extends Component {
       //   histo: []
       // },
       scales: [
-        // [short name, focus, candle scale, squeeze status, data, osc, diff]
+        // [short name, focus, focus scale, squeeze status (1,2,3), data, osc, diff]
         // ['1M', 'minute', 1, 0, [], [], []],
         // ['5M', 'minute', 5, 0, [], [], []],
         // ['15M', 'minute', 15, 0, [], [], []],
@@ -59,10 +59,16 @@ export default class Coin extends Component {
       cointime: 0,
       fullwidth: this.props.fullwidth,
       settings: false,
-      batch: 120,
-      display: 50,
+      batch: 220,
+      display: 100,
       length: 20
     }
+  }
+
+  setStateAsync(state) {
+    return new Promise((resolve) => {
+      this.setState(state, resolve)
+    });
   }
 
   componentWillMount() {
@@ -70,8 +76,14 @@ export default class Coin extends Component {
 
   componentDidMount() {
     //this.setSqueezeAlert(scaleIndex)
+    const _this = this
     this.state.scales.map((item, scaleIndex)=> {
-      this.getCoin(scaleIndex)
+      setTimeout(function() {
+        _this.getCoin(scaleIndex)
+      }, ASYNC_DELAY * scaleIndex)
+
+      return ''
+      
     })
     //console.log(this.refs.coin)
 
@@ -86,7 +98,7 @@ export default class Coin extends Component {
 
   overCandle(price, time){
 
-    this.setState({
+    this.setStateAsync({
       coinprice:price,
       cointime:time
     })
@@ -97,48 +109,49 @@ export default class Coin extends Component {
     //this.forceUpdate();
   }
 
-  setSqueezeAlert(index){
+  setSqueezeAlert(index, data){
+    //console.log(data)
     //this.state.scales[time][3] = type
 
     //this.getCoin(index)
+   
+    let scales = this.state.scales
+    scales[index][4] = data
 
-    if(this.state.data.histo.length === this.state.batch){
+    this.setStateAsync({
+      scales:scales
+    })
+    
 
-      let scales = this.state.scales
+    if(scales[index][4].length === this.state.batch){
 
-      const test = this.state.data.histo.slice(this.state.data.histo.length - (this.state.display + this.state.length), this.state.data.histo.length)
-      const histo = this.state.data.histo.slice(this.state.length, test.length)
+      
+      const test = scales[index][4].slice(scales[index][4].length - (this.state.display + this.state.length), scales[index][4].length)
+      const histo = scales[index][4].slice(this.state.length, test.length)
 
       const closes = test.map(candle => candle.close)
 
       const keltner = kc(test, this.state.length, 1, false)
       const simpleMovingAverage = sma(closes, this.state.length); // [3, 4]
-      //const exponentialMovingAverage = ema(closes, length); // [4, 4]
       const bollinger = boll(closes, this.state.length, 2, true); // { upper: [], mid: [], lower: []}
 
       const linearRegression = (y,x) => {
         
-        var lr = {}
-        var n = y.length
-        var sum_x = 0
-        var sum_y = 0
-        var sum_xy = 0
-        var sum_xx = 0
-        //var sum_yy = 0;
+        let lr = {}
+        let n = y.length
+        let sum_x = 0
+        let sum_y = 0
+        let sum_xy = 0
+        let sum_xx = 0
 
-        for (var i = 0; i < y.length; i++) {
+        for (let i = 0; i < y.length; i++) {
             sum_x += x[i]
             sum_y += y[i]
             sum_xy += (x[i]*y[i])
             sum_xx += (x[i]*x[i])
-            //sum_yy += (y[i]*y[i]);
         } 
 
-        //( sum(y) * sum(x^2) - sum(x) * sum(x*y) ) / (n*sum(x^2)-sum(x)^2)
-        //lr['lr'] = ( sum_y * sum_xx - sum_x * sum_xy ) / (n * sum_xx - (sum_x * sum_x))
         lr['slope'] = (n * sum_xy - sum_x * sum_y) / (n*sum_xx - sum_x * sum_x)
-        //lr['intercept'] = (sum_y - lr.slope * sum_x) / n
-        //lr['r2'] = Math.pow((n*sum_xy - sum_x*sum_y)/Math.sqrt((n*sum_xx-sum_x*sum_x)*(n*sum_yy-sum_y*sum_y)),2);
 
         return lr
     }
@@ -147,8 +160,8 @@ export default class Coin extends Component {
     const e1 = histo.map((can,i) => {
         const from = this.state.batch - (this.state.display + this.state.length) + i
         const to = this.state.batch - this.state.display + i
-        const highest = Math.max.apply(null, this.state.data.histo.slice(from, to).map(candle => candle.high))
-        const lowest = Math.min.apply(null, this.state.data.histo.slice(from, to).map(candle => candle.low))
+        const highest = Math.max.apply(null, scales[index][4].slice(from, to).map(candle => candle.high))
+        const lowest = Math.min.apply(null, scales[index][4].slice(from, to).map(candle => candle.low))
         const output = (highest + lowest + simpleMovingAverage[i])/3
 
         return output
@@ -159,7 +172,7 @@ export default class Coin extends Component {
     
     // histo is only the display data where this.props. histo is the batch data
     const osc = histo.map((can,i) => {
-        const input_y = this.state.data.histo
+        const input_y = scales[index][4]
         .slice(this.state.batch - (this.state.display + this.state.length) + i, this.state.batch - this.state.display + i)
         .map((histo,i) => histo.close - (e1[i]/2))
         
@@ -181,25 +194,27 @@ export default class Coin extends Component {
         return bband[i] > kelt[i]
     })
     
-    //const ratio = 100/(largest*2)
-
     const osc_color = osc.map((o,i) => {
         return osc[i-1] < o ? o >= 0 ? lightblue : darkpuple : o >= 0 ? darkblue : lightpurple
     })
 
     scales[index][5] = osc
     scales[index][6] = diff
+    this.setStateAsync({
+      scales:scales
+    })
 
     let inSqueeze = false
     let lastSqueeze = null
 
     histo.map((candle, i) => {
-      const dotcolor = diff[i] ? '#008000' : '#FF0000'
+      const hasSqueeze = diff[i] ? false : true
 
-      if (dotcolor === '#FF0000') {
+      if (hasSqueeze) {
         inSqueeze = true
         lastSqueeze = i
       }
+      return ''
     })
 
     if(inSqueeze){
@@ -211,23 +226,15 @@ export default class Coin extends Component {
         let current_color = osc_color[lastSqueeze + 1]
         histo.slice(lastSqueeze + 1, histo.length).map((candle, i) => {
           if(trend){
-            if(current_color === osc_color[i + lastSqueeze]){
-              trend = true
-            }else{
-              trend = false
-            }
+            trend = (current_color === osc_color[i + lastSqueeze + 1]) ? true : false
           }
+          return ''
         })
         if(trend){
-          if(current_color === lightblue || current_color === darkpuple){
-            scales[index][3] = 3
-          }else{
-            scales[index][3] = 2
-          }
-          
+          scales[index][3] = (current_color === lightblue || current_color === darkpuple) ? 3 : 2
         }
       }
-      this.setState({
+      this.setStateAsync({
         scales:scales
       })
     }
@@ -236,60 +243,49 @@ export default class Coin extends Component {
 
   async getCoin(index) {
 
-    const _fsym = (this.state.coin.fsym === 'MIOTA') ? 'IOT' : this.state.coin.fsym
+    let _fsym = (this.state.coin.fsym === 'MIOTA') ? 'IOT' : this.state.coin.fsym
+    
     if(this.state.scales[index][0] === '15M' || this.state.scales[index][0] === '30M'){
-      this.setState({
+      this.setStateAsync({
         batch: 60,
         display: 20,
       })
-    }else{
-      this.setState({
-        batch: this.state.batch,
-        display: this.state.display,
-      })
     }
     const historyres = await fetch('https://min-api.cryptocompare.com/data/histo'+this.state.scales[index][1]+'?fsym='+_fsym+'&tsym='+this.state.coin.tsym+'&limit='+(this.state.batch-1)+'&aggregate='+this.state.scales[index][2]+'&e=CCCAGG')
-    const histo = await historyres.json().then((data) => data)
-    this.state.scales[index][4] = histo.Data
-    this.setState({
-      data:{
-        histo:histo.Data
-      },
-      coinprice: 0, 
-      cointime: 0,
-      
-    },() => {
-      this.setSqueezeAlert(index)
-    });
-
+    
+    await historyres.json().then((data) => {
+      console.log('getCoin',data)
+      this.setSqueezeAlert(index, data.Data)
+    })
+    //this.state.scales[index][4] = histo.Data
+    // this.setStateAsync({
+    //   coinprice: 0, 
+    //   cointime: 0,
+    // })
+    
   }
 
   componentWillReceiveProps(nextProps){
-    this.updateCoin(nextProps.current)
+    //this.updateCoin(nextProps.current)
   }
 
   updateCoin(scaleIndex){
-    this.setState({
+    this.setStateAsync({
       current: scaleIndex
-    }, () => {
-      this.getCoin(scaleIndex)
     })
+    this.getCoin(scaleIndex)
   }
 
   toggleFullWidth(){
-    this.setState({
+    this.setStateAsync({
       fullwidth: !this.state.fullwidth
     },() => console.log(this.state.fullwidth))
 
   }
   toggleCoinSettings(){
-    this.setState({
+    this.setStateAsync({
       settings: !this.state.settings
     },() => console.log(this.state.settings))
-  }
-
-  setWatches(){
-
   }
   
   render() {
@@ -334,6 +330,7 @@ export default class Coin extends Component {
       flex-wrap: wrap;
       height:28px;
       text-align:center;
+      background-color:rgba(0,0,0,0.65);
     `
 
     const throughSpace = keyframes`
@@ -361,15 +358,26 @@ export default class Coin extends Component {
     `
 
     const CoinBox = styled.div`
-      overflow:hidden;
-      //flex: 1;
-      flex: 1 0 30%;
+     
       //background-color: rgba(242,266,247,0.07);
       border-width:10px;
       border-color: #15151e;
       position: relative;
       margin:5px;
-      min-height:600px;
+      overflow:hidden;
+
+      background-color: rgba(242,266,247,0.07);
+      height:33.333333333vw;
+      flex: 1 0 30%;
+
+      @media (max-width: 1200px) {
+        flex: 1 1 40%;
+        height:50vw;
+      }
+      @media (max-width: 768px) {
+        height:100vw;
+      }
+
 
       &:hover ${CoinBackground}
         {
@@ -398,7 +406,7 @@ export default class Coin extends Component {
     `
 
     const BoxBody = styled.div`
-      padding: 10px;
+      padding: 0px;
       flex:1;
       display: flex;
       flex-direction: column;
@@ -414,13 +422,18 @@ export default class Coin extends Component {
       width:100%;
       display:flex;
       flex-direction: row;
-      height:100px;
+      height:120px;
     `
     const CoinInfoWrap = styled.div`
+      padding:10px;
+      box-sizing:border-box;
+      position:relative;
+      z-index:9999;
       width:100%;
       display:flex;
       flex-direction: column;
-      height:100px;
+      height:130px;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%);
     `
 
     const CoinName = styled.div`
@@ -518,7 +531,7 @@ export default class Coin extends Component {
    //#endregion
 
     return (
-        <CoinBox  className={'coin'} ref={'coin'} key={this.props.coinIndex}>
+        <CoinBox  className={'coin full'} ref={'coin'} key={this.props.coinIndex}>
           <CoinBackground className={'coin-background'}  color={(this.state.coin.percent_change_24h > 0) ? 'red' : 'green'} />
           <CoinGradient />
           <CoinWrap>
@@ -589,16 +602,21 @@ export default class Coin extends Component {
               <HistogramBlock>
                 <ChartWrap>
                   <TTMSqueeze 
-                      coin={this.state.coin}
-                      current={this.state.current}
-                      display={this.state.display}
-                      length={this.state.length}
-                      batch={this.state.batch}
-                      histo={this.state.scales[this.state.current][4]} 
-                      osc={this.state.scales[this.state.current][5]}
-                      diff={this.state.scales[this.state.current][6]}
-                      className={(this.state.settings) ? 'hide' : ''} />
-                  
+                    coin={this.state.coin}
+                    current={this.state.current}
+                    display={this.state.display}
+                    length={this.state.length}
+                    batch={this.state.batch}
+                    osc={this.state.scales[this.state.current][5]}
+                    diff={this.state.scales[this.state.current][6]}
+                    className={(this.state.settings) ? 'hide' : ''} />
+                  {/* <RSI 
+                    coin={this.state.coin} 
+                    display={this.state.display}
+                    length={this.state.length}
+                    sample={this.state.sample}
+                    histo={this.state.scales[this.state.current][4]} 
+                    className={(this.state.settings) ? 'hide' : ''} /> */}
                 </ChartWrap>
               </HistogramBlock>
             </BoxBody>

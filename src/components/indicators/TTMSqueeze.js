@@ -45,9 +45,9 @@ export default class TTMSqueeze extends Component {
         chart = this.props.osc.map((candle,i) => {
             
             const color = osc_color[i]
-            const y1 = 50
-            const y2 = this.props.osc[i] < 0 ? 50 + (ratio * (this.props.osc[i])*-1) : 50 -(ratio*this.props.osc[i])
-            const dotcolor = this.props.diff[i] ? '#008000': '#FF0000'
+            const y1 = this.props.osc[i] < 0 ? 55 : 45
+            const y2 = this.props.osc[i] < 0 ? 55 + (ratio * (this.props.osc[i])*-1) : 45 -(ratio*this.props.osc[i])
+            const dotcolor = this.props.diff[i] ? '#48ea61': '#ff0051'
 
       
             return (
