@@ -16,7 +16,7 @@ export default class TTMSqueeze extends Component {
 
     super(props);
     this.state = {
-        chart: ''
+      chart: ''
     }
 
   }
@@ -27,53 +27,55 @@ export default class TTMSqueeze extends Component {
   componentDidMount() {
     const display = this.props.display
 
-    const candleWidth = boxwidth/display
+    const candleWidth = boxwidth / display
     let chart = ''
-    
-    if(this.props.osc.length){
+    if (this.props.osc.length) {
 
-        let largest = Math.max.apply(null, this.props.osc.map(o => o < 0 ? o * -1 : o))
-        
-        const ratio = 100/(largest*2)
+      let largest = Math.max.apply(null, this.props.osc.map(o => o < 0 ? o * -1 : o))
 
-        const osc_color = this.props.osc.map((o,i) => {
-            return this.props.osc[i-1] < o ? o >= 0 ? lightblue : darkpuple : o >= 0 ? darkblue : lightpurple
-        })
+      const ratio = 100 / (largest * 2)
 
+      const osc_color = this.props.osc.map((o, i) => {
+        return this.props.osc[i - 1] < o ? o >= 0 ? lightblue : darkpuple : o >= 0 ? darkblue : lightpurple
+      })
 
 
-        chart = this.props.osc.map((candle,i) => {
-            
-            const color = osc_color[i]
-            const y1 = this.props.osc[i] < 0 ? 55 : 45
-            const y2 = this.props.osc[i] < 0 ? 55 + (ratio * (this.props.osc[i])*-1) : 45 -(ratio*this.props.osc[i])
-            const dotcolor = this.props.diff[i] ? '#48ea61': '#ff0051'
 
-      
-            return (
-                <g key={i}>
-                    <line strokeLinecap="round" className="time" stroke={color} style={{ strokeMiterLimit:5,fill:color}} 
-                        x1={(candleWidth*i + candleWidth/4)} 
-                        x2={(candleWidth*i + candleWidth/4)}
-                        y1={y1} 
-                        y2={y2} 
-                        strokeWidth="2" />
-                    <circle cx={(candleWidth*i + candleWidth/4)} cy={50} r="2" stroke="black" strokeWidth="0" fill={dotcolor} style={{opacity:0.9}} />
-                </g>
-            )
-        })
-        
-    
+      chart = this.props.osc.map((candle, i) => {
+
+
+        const color = osc_color[i]
+        const y1 = this.props.osc[i] < 0 ? 55 : 45
+        const y2 = this.props.osc[i] < 0 ? 55 + (ratio * (this.props.osc[i]) * -1) : 45 - (ratio * this.props.osc[i])
+        const dotcolor = this.props.diff[i] ? '#48ea61' : '#ff0051'
+
+
+        return (
+          <g key={i}>
+            <line strokeLinecap="round" className="time" stroke={color} style={{ strokeMiterLimit: 5, fill: color }}
+              x1={(candleWidth * i + candleWidth / 4)}
+              x2={(candleWidth * i + candleWidth / 4)}
+              y1={y1}
+              y2={y2}
+              strokeWidth="2" />
+            <circle cx={(candleWidth * i + candleWidth / 4)} cy={50} r="2" stroke="black" strokeWidth="0" fill={dotcolor} style={{ opacity: 0.9 }} />
+          </g>
+        )
+      })
+
+
+    } else {
+      console.log(this.props.osc);
     }
     this.setState({
-        chart:chart
+      chart: chart
     })
   }
 
-  componentWillReceiveProps(nextProps){
+  componentWillReceiveProps(nextProps) {
   }
 
-  
+
   render() {
 
     //console.log(this.props.current)
@@ -90,9 +92,9 @@ export default class TTMSqueeze extends Component {
     `
 
     return (
-        <Chart viewBox={'0 0 '+boxwidth+' '+boxheight} preserveAspectRatio="none">{this.state.chart}</Chart>
-      )
-    }
-    
+      <Chart viewBox={'0 0 ' + boxwidth + ' ' + boxheight} preserveAspectRatio="none">{this.state.chart}</Chart>
+    )
+  }
+
 }
 

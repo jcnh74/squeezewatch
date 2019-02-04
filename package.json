@@ -4,6 +4,7 @@
   "description": "SqueezeWatch",
   "author": "John Hanusek <hanusek@gmail.com>",
   "private": true,
+  "license" : "SEE LICENSE IN license.txt",
   "main": "server.js",
   "homepage" : "http://jcnh74.github.io/squeezewatch",
   "devDependencies": {
