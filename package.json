@@ -6,7 +6,6 @@
   "private": true,
   "license" : "SEE LICENSE IN license.txt",
   "main": "server.js",
-  "homepage" : "https://stoic-poitras-5dcbae.netlify.com",
   "devDependencies": {
     "babel-core": "^6.0.20",
     "babel-loader": "^7.1.3",
