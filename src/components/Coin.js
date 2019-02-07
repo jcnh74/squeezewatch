@@ -56,7 +56,7 @@ export default class Coin extends Component {
       ],
       current: this.props.current,
       coinprice: 0,
-      cointime: 0,
+      cointime: '',
       fullwidth: this.props.fullwidth,
       settings: false,
       batch: 220,
@@ -252,7 +252,7 @@ export default class Coin extends Component {
       // date.setDate(date.getDate() - 1);
       
       // date ;
-  console.log(url1);
+  // console.log(url1);
       var data = await Promise.all([
         fetch(url1).then((response) => response.json()),// parse each response as json
       ]);
@@ -550,7 +550,7 @@ export default class Coin extends Component {
                 </CoinName>
                 <CoinPrice>
                   <CoinPriceText>{symbol + ((this.state.coinprice === 0) ? (this.state.coin.tsym === 'BTC') ? this.state.coin.price_btc : formatCurrency(this.state.coin.price) : (this.state.coin.tsym === 'BTC') ? this.state.coinprice : formatCurrency(this.state.coinprice))}</CoinPriceText>
-                  <CoinLabel align={'right'}>Last trade price</CoinLabel>
+                  <CoinLabel align={'right'}>{(this.state.cointime !== '' ? this.state.cointime : 'Last trade price')}</CoinLabel>
                 </CoinPrice>
               </CoinInfo>
               <CoinInfo>

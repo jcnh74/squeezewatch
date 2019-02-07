@@ -64,10 +64,10 @@ export default class Candlestick extends Component {
                                 y={0} 
                                 width={candleWidth} 
                                 height={boxHeight} 
-                                onMouseEnter={() => this.props.overCandle((this.props.coin.tsym === 'BTC') ? Number(candle.close).toFixed(8) : Number(candle.close).toFixed(2), candle.time)}
+                                onMouseEnter={() => this.props.overCandle((this.props.coin.tsym === 'BTC') ? Number(candle.close).toFixed(8) : Number(candle.close).toFixed(2), formattedtime)}
                                 onMouseLeave={() => this.props.overCandle( (this.props.coin.tsym === 'BTC') ? this.props.coin.price_btc : Number(this.props.coin.price).toFixed(2), '')} />
-          <line className="timeline" style={{ strokeMiterLimit:10}} x1={(candleWidth*i)+(candleWidth/4)} y1={boxHeight} x2={(candleWidth*i)+(candleWidth/4)} y2={4}/>
-          <text className="text" font-size="6" x={(i > histo.length/2) ? (candleWidth*i)-78 : (candleWidth*i)+6} y={boxHeight/5} width="auto">{formattedtime}</text>
+          {/* <line className="timeline" style={{ strokeMiterLimit:10}} x1={(candleWidth*i)+(candleWidth/4)} y1={boxHeight} x2={(candleWidth*i)+(candleWidth/4)} y2={4}/> */}
+          {/* <text className="text" font-size="6" x={(i > histo.length/2) ? (candleWidth*i)-78 : (candleWidth*i)+6} y={boxHeight/5} width="auto">{formattedtime}</text> */}
           {/* "dddd, mmmm dS, yyyy, h:MM:ss" */}
         </g>
       )

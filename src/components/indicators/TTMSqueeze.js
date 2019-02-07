@@ -65,7 +65,7 @@ export default class TTMSqueeze extends Component {
 
 
     } else {
-      console.log(this.props.osc);
+      // console.log(this.props.osc);
     }
     this.setState({
       chart: chart
