@@ -8,6 +8,30 @@ import 'react-select/dist/react-select.css';
 
 import styled, { css } from 'styled-components';
 
+// import binance from 'node-binance-api';
+
+// const Binance = require('binance-api-node').default
+
+// const client = Binance()
+
+// // Authenticated client, can make signed calls
+// const client2 = Binance({
+//   apiKey: 'xbvmdpeXTtTAgr2H9eibioZCzlClKBHt7EsaVUmEkORq2aOpZvWrCJY6XmVqfyCv',
+//   apiSecret: '9brjZ0wgQXiaCDoqalxdoGb55iUdvV4LWvtbbUfaQOtCh7nqLAX76euOsKpfkJBY',
+// })
+
+// client.time().then(time => console.log(time))
+
+// const binance = require('node-binance-api')().options({
+//   APIKEY: 'xbvmdpeXTtTAgr2H9eibioZCzlClKBHt7EsaVUmEkORq2aOpZvWrCJY6XmVqfyCv',
+//   APISECRET: '9brjZ0wgQXiaCDoqalxdoGb55iUdvV4LWvtbbUfaQOtCh7nqLAX76euOsKpfkJBY',
+//   useServerTime: true // If you get timestamp errors, synchronize to server time at startup
+// });
+
+// binance.prices('BNBBTC', (error, ticker) => {
+//   console.log("Price of BNB: ", ticker.BNBBTC);
+// });
+
 
 
 // import sma from 'sma'
@@ -28,7 +52,7 @@ page = (page !== 'undefined') ? page : 0
 
 
 const coinlist = []
-const COUNT = 9
+const COUNT = 6
 const OFFSET = COUNT*page
 const MAX_CONTRIBUTORS = 6
 const ASYNC_DELAY = 1500
@@ -90,7 +114,10 @@ export default class App extends React.Component {
     
 
     const list = await fetch('https://api.coinmarketcap.com/v1/ticker/?start='+OFFSET+'&limit='+count)
+    //const list = await fetch('https://api.binance.com/api/v1/exchangeInfo')
     const myCoins = await list.json().then((data) => data)
+
+
 
     const theCoins = myCoins.map((coin,index) => {
       return {
