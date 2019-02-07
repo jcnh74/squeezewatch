@@ -59,15 +59,15 @@ export default class Candlestick extends Component {
         <g key={i}>
           <rect className="candle" style={{ fill:color,strokeMiterLimit:10}} x={(candleWidth*i)} y={candletop} width={candleWidth/2} height={height}/>
           <line className="wick" style={{ stroke:color,strokeMiterLimit:10}} x1={(candleWidth*i)+(candleWidth/4)} y1={wickbottom} x2={(candleWidth*i)+(candleWidth/4)} y2={wicktop}/>
-          <rect className="time"  style={{ strokeMiterLimit:10}} 
+          {/* <rect className="time"  style={{ strokeMiterLimit:10}} 
                                 x={(candleWidth*i)} 
                                 y={0} 
                                 width={candleWidth} 
                                 height={boxHeight} 
                                 onMouseEnter={() => this.props.overCandle((this.props.coin.tsym === 'BTC') ? Number(candle.close).toFixed(8) : Number(candle.close).toFixed(2), candle.time)}
-                                onMouseLeave={() => this.props.overCandle( (this.props.coin.tsym === 'BTC') ? this.props.coin.price_btc : Number(this.props.coin.price).toFixed(2), '')} />
+                                onMouseLeave={() => this.props.overCandle( (this.props.coin.tsym === 'BTC') ? this.props.coin.price_btc : Number(this.props.coin.price).toFixed(2), '')} /> */}
           <line className="timeline" style={{ strokeMiterLimit:10}} x1={(candleWidth*i)+(candleWidth/4)} y1={boxHeight} x2={(candleWidth*i)+(candleWidth/4)} y2={4}/>
-          <text className="text" x={(i > histo.length/2) ? (candleWidth*i)-58 : (candleWidth*i)} y={boxHeight/5} width="auto">{formattedtime}</text>
+          {/* <text className="text" x={(i > histo.length/2) ? (candleWidth*i)-58 : (candleWidth*i)} y={boxHeight/5} width="auto">{formattedtime}</text> */}
           {/* "dddd, mmmm dS, yyyy, h:MM:ss" */}
         </g>
       )
