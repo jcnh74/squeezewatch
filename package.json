@@ -4,7 +4,7 @@
   "description": "SqueezeWatch",
   "author": "John Hanusek <hanusek@gmail.com>",
   "private": true,
-  "license" : "SEE LICENSE IN license.txt",
+  "license": "SEE LICENSE IN license.txt",
   "main": "server.js",
   "devDependencies": {
     "babel-core": "^6.0.20",
