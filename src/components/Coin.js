@@ -406,15 +406,15 @@ export default class Coin extends Component {
         }  
     `
 
-    const CoinGradient = styled.div`
-      top: 0px;
-      bottom: 0px;
-      left: 0px;
-      right: 0px;
-      position: absolute;
+    // const CoinGradient = styled.div`
+    //   top: 0px;
+    //   bottom: 0px;
+    //   left: 0px;
+    //   right: 0px;
+    //   position: absolute;
       
-      //background: linear-gradient(to bottom, rgba(21,21,30,1) 0%,rgba(21,21,30,1) 60%,rgba(21,21,30,0.3) 95%,rgba(21,21,30,0.3) 100%);
-    `
+    //   //background: linear-gradient(to bottom, rgba(21,21,30,1) 0%,rgba(21,21,30,1) 60%,rgba(21,21,30,0.3) 95%,rgba(21,21,30,0.3) 100%);
+    // `
 
     const CoinWrap = styled.div`
       display: flex;

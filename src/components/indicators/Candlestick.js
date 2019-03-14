@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import moment from 'moment'
+// import moment from 'moment'
 
 import styled from 'styled-components';
 
@@ -45,8 +45,8 @@ export default class Candlestick extends Component {
 
       const boxHeight = 200
 
-      const date = moment.unix(candle.time)
-      var formattedtime = date.format("MMM D H:mm")
+      // const date = moment.unix(candle.time)
+      // var formattedtime = date.format("MMM D H:mm")
 
       const color = candle.open > candle.close ? '#df4b7a' : '#48ea61'
       const wicktop = ((largest - candle.high)/range)*boxHeight

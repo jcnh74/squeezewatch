@@ -1,0 +1,317 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 40vmin;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+
+
+
+
+body{
+  background-color: #15151e; 
+  color: #f2e2f7;
+  /* font-family: 'Avenir; sans-serif; */
+  /* font-family: 'Exo 2'; */
+  font-weight: 500;
+  
+}
+#root{
+  /* font-family: 'Exo 2'; */
+  font-weight: 400;
+}
+html,
+body{
+  background-color: #15151e;
+}
+.wrapper .settings{
+  width:0vw;
+  min-height: 100vh;
+  overflow:hidden;
+  transition: width 0.3s cubic-bezier(0.770, 0.000, 0.175, 1.000);
+}
+.wrapper.open .settings{
+  width:33vw;
+}
+.coin{
+  position: relative;
+  z-index: 1;
+}
+.full{
+  flex: 1 1 100%;
+  height:100vw;
+}
+.app-settings{
+  min-width:100px;
+  padding:0px 10px;
+  cursor:pointer;
+}
+.app-settings svg path{
+  fill: rgb(180,180,180);
+}
+.app-settings:hover svg path{
+  fill: rgb(240,240,240);
+}
+.settings-group{
+  display:flex;
+  text-align:right;
+  align-items:stretch;
+  padding:8px;
+}
+.coin-wrap{
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top:0;
+  right:0;
+  bottom:0;
+  left:0;
+  height:100%;
+}
+.coin-background{
+  top: -400px;
+  bottom: -400px;
+  left: -400px;
+  right: -400px;
+  position: absolute;
+  
+  background-size:1% 1%, 2% 2%;
+  background-position:0 0, 0 0;
+  transition: top 0.3s, bottom 0.3s;
+  
+  transform: perspective(300px) rotateX(80deg);
+}
+.coin:hover .coin-background{
+  top: -375px;
+  bottom: -425px;
+  animation: throughSpace 20s linear;
+  animation-iteration-count: infinite;
+}
+/* .fullwidth, .settings{
+  transition: opacity 0.15s;
+}
+.coin:hover .fullwidth, .coin:hover .settings{
+  opacity:0.5 !important;
+} */
+
+/* The switch - the box around the slider */
+.switch {
+position: relative;
+display: inline-block;
+width: 60px;
+height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {display:none;}
+
+/* The slider */
+.slider {
+position: absolute;
+cursor: pointer;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background-color: #ccc;
+-webkit-transition: .4s;
+transition: .4s;
+}
+
+.slider:before {
+position: absolute;
+content: "";
+height: 26px;
+width: 26px;
+left: 4px;
+bottom: 4px;
+background-color: white;
+-webkit-transition: .4s;
+transition: .4s;
+}
+
+input:checked + .slider {
+background-color: #2196F3;
+}
+
+input:focus + .slider {
+box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+-webkit-transform: translateX(26px);
+-ms-transform: translateX(26px);
+transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+border-radius: 34px;
+}
+
+.slider.round:before {
+border-radius: 50%;
+}
+.red{
+  background-image: linear-gradient(#df4b7a 0.4px, transparent 0.6px), linear-gradient(90deg, #df4b7a 0.4px, transparent 0.6px);
+}
+.green{
+  background-image: linear-gradient(#48ea61 0.4px, transparent 0.6px), linear-gradient(90deg, #48ea61 0.4px, transparent 0.6px);
+}
+.coin-gradient{
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  position: absolute;
+  background: linear-gradient(to bottom, rgba(21,21,30,1) 0%,rgba(21,21,30,1) 60%,rgba(21,21,30,0.3) 95%,rgba(21,21,30,0.3) 100%);
+}
+.time{
+  fill: transparent;
+  cursor: crosshair;
+}
+.volume{
+  opacity:0.5;
+}
+.time + .timeline{
+  stroke:transparent;
+  pointer-events: none;
+}
+
+.time:hover + .timeline{
+  stroke:white;
+}
+.time:hover + .timeline + .text{
+  opacity:1;
+}
+.text{
+  fill:white;
+  opacity:0;
+  font-size:5px;
+  font-family: Exo 2;
+}
+
+@keyframes throughSpace{
+  0%{
+    transform: perspective(300px) rotateX(80deg) translateY(5.8%);
+  }
+  100%{
+    transform: perspective(300px) rotateX(80deg) translateY(0%);
+  }
+}
+
+#root{
+  min-height:100vh;
+  color:white;
+}
+.box{ 
+  align-items: center;
+  padding: 20;
+}
+
+.grid{
+  flex:1;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.boxbody{
+  padding: 10px;
+  flex:1;
+  display: flex;
+  flex-wrap: wrap;
+}
+.text{
+  font-size: 0.9em;
+  width: auto;
+}
+.indicatorwatch{
+  height:10px;
+  background-color: #df4b7a;
+}
+.indicatorfire {
+  height:10px;
+  background-color: #48ea61;
+}
+
+
+.watch{
+  background-color:rgb(255, 152, 56);
+}
+.fired-long{
+  background-color:#48ea61;
+}
+.fired-short{
+  background-color:#df4b7a;
+}
+.legend{
+  
+  padding: 0 10px;
+  max-height:38px;
+  white-space: nowrap;
+  
+}
+.legend-text{
+  display: inline-block;
+  line-height: 38px;
+  
+}
+.legend .watch,
+.legend .fired-long,
+.legend .fired-short{
+  display: inline-block;
+  padding:10px;
+  margin:0 5px;
+}
+
+
+.squeezetime{
+  align-items: center;
+  flex:1;
+  padding: 4px;
+  border: 2px solid transparent;
+  cursor:pointer;
+}
+.squeezetimeselected{
+  align-items: center;
+  flex:1;
+  padding: 4px;
+  border: 2px solid transparent;
+  border-bottom-color: white;
+  cursor:pointer;
+}
+.hide{display: none;}
+.search{
+  z-index:999999 !important;
+  margin-top:10px;
+}
