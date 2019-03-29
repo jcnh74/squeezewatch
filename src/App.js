@@ -349,6 +349,7 @@ class App extends Component {
                   <div className={'fired-long'}>Fired Long</div>
                   <div className={'fired-short'}>Fired Short</div>
                 </div>
+                <div id="tippin-button" data-dest="hanusek"></div>
               </div>
             </div>
           </div>
