@@ -24,7 +24,7 @@ page = (page !== 'undefined') ? page : 0
 
 
 const coinlist = []
-const COUNT = 6
+const COUNT = 9
 const OFFSET = COUNT*page
 const MAX_CONTRIBUTORS = 6
 const ASYNC_DELAY = 1500
@@ -98,6 +98,7 @@ class App extends Component {
         percent_change_24h: coin['percent_change_24h']
       }
     })
+    console.log(theCoins);
     const options = myCoins.map((coin,index) => {
       return {
         symbol: coin.symbol, 
@@ -106,7 +107,7 @@ class App extends Component {
     })
     this.setState({
       coins:theCoins,
-      allcoins: options,
+      allcoins:options,
       data:myCoins
     })
     this.getAllCoins()
@@ -140,6 +141,7 @@ class App extends Component {
         name: coin.CoinName + ' [' + coin.Symbol + ']'
       }
     })
+
     this.setState({
       allcoins:allcoins
     })
@@ -240,7 +242,6 @@ class App extends Component {
     })
 
     const sorteddata = this.state.coins.sort((a, b) => {
-    
       return a.rank - b.rank;
     })
     const griditems = sorteddata.map((coin, coinIndex) => {

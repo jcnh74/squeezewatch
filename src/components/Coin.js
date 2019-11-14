@@ -320,7 +320,6 @@ export default class Coin extends Component {
         <div
           key={scaleIndex}
           className={((this.state.current === scaleIndex) ? 'squeezetimeselected ' : 'squeezetime ') + watchstate}
-          style={[{ width: 100 / this.state.scales.length }]}
           onClick={() => this.updateCoin(scaleIndex)}>
           <div className={'squeezetimetext'}>{item[0]}</div>
         </div>
