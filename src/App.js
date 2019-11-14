@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import "typeface-exo"
 import Coin from'./components/Coin'
+import {Helmet} from "react-helmet"
 
 
 import Select from 'react-select';
@@ -264,6 +265,10 @@ class App extends Component {
 
     return (
       <div className={'wrapper ' + (this.state.settings ? 'open' : '')}>
+        <Helmet>
+            <title>Squeeze Watch | Get realtime TTM Squeeze indication of multiple Cryptocurrencies positions.</title>
+            <meta name="description" content="Squeeze Watch, Realtime TTM Squeeze indication for Cryptocurrencies. Beautiful Graphs and Charts." />
+        </Helmet>
         <div className={'main'}>
           <div className={'header'}>
             <div className={'header-wrapper'}>
