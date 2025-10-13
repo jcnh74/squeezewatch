@@ -1,0 +1,180 @@
+.coin-box {
+  border-width: 10px;
+  border-color: #15151e;
+  position: relative;
+  margin: 5px;
+  overflow: hidden;
+  background-color: rgba(242, 266, 247, 0.015);
+  height: auto;
+  flex: 1 0 30%;
+  align-self: flex-start;
+  min-height: 180px;
+
+  @media (max-width: 1200px) {
+    flex: 1 1 40%;
+    height: auto;
+  }
+
+  &:hover .coin-background {
+    opacity: 1;
+  }
+}
+
+.coin-background {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  background-image: url(https://i.pinimg.com/originals/55/a2/de/55a2de454d44dc13bbfb17113465118d.gif);
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+}
+
+.coin-wrap {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.coin-indicator {
+  height: 10px;
+
+  &.red {
+    background-color: #48ea61;
+  }
+
+  &.green {
+    background-color: #df4b7a;
+  }
+}
+
+.squeeze-time-wrap {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  height: 28px;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.65);
+}
+
+.box-body {
+  padding: 0px;
+  // flex: 1;
+  display: block;
+  // flex-direction: column;
+  overflow: hidden;
+}
+
+.coin-info-wrap {
+  padding: 10px;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 9999;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  height: 130px;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.65) 0%,
+    rgba(0, 0, 0, 0) 100%
+  );
+}
+
+.coin-info {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  height: 120px;
+}
+
+.coin-name {
+  display: flex;
+  flex-direction: row;
+  width: 50%;
+}
+
+.coin-name-text {
+  font-size: 3.2em;
+  font-weight: 700;
+  width: auto;
+  letter-spacing: 3px;
+  display: inline-block;
+  font-family: "Exo 2", Arial, san-serif;
+}
+
+.coin-name-pair-text {
+  padding-top: 32px;
+  font-size: 1em;
+  width: auto;
+  display: inline-block;
+  font-family: "Exo 2", Arial, san-serif;
+}
+
+.coin-price {
+  width: 50%;
+}
+
+.coin-price-text {
+  padding-top: 5px;
+  font-size: 1.8em;
+  font-family: Exo 2;
+  font-weight: 700;
+  text-align: right;
+}
+
+.coin-label {
+  font-size: 0.7em;
+  font-family: "Exo 2", Arial, san-serif;
+
+  &.align-left {
+    text-align: left;
+  }
+
+  &.align-right {
+    text-align: right;
+  }
+}
+
+.coin-price-change-text {
+  padding-top: 5px;
+  font-size: 1.8em;
+  font-family: "Exo 2", Arial, san-serif;
+
+  &.red {
+    color: #48ea61;
+  }
+
+  &.green {
+    color: #df4b7a;
+  }
+}
+
+.chart-block {
+  height: 300px;
+  padding: 10px 0;
+  width: 100%;
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.chart-wrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+}
+
+.histogram-block {
+  height: 150px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  position: relative;
+}
