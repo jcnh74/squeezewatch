@@ -22,6 +22,14 @@ const formatCurrency = (value) => {
     maximumFractionDigits: 2,
   });
 };
+const formatCurrencyLong = (value) => {
+  const num = typeof value === "string" ? parseFloat(value) : value;
+  if (isNaN(num)) return "0.00";
+  return num.toLocaleString("en-US", {
+    minimumFractionDigits: 7,
+    maximumFractionDigits: 7,
+  });
+};
 
 const kc = keltnerchannel.kc;
 const sma = keltnerchannel.sma;
@@ -406,10 +414,10 @@ export default class Coin extends Component {
                     {symbol +
                       (this.state.coinprice === 0
                         ? this.state.coin.tsym === "BTC"
-                          ? this.state.coin.price_btc
+                          ? formatCurrencyLong(this.state.coin.price_btc)
                           : formatCurrency(this.state.coin.price)
                         : this.state.coin.tsym === "BTC"
-                        ? this.state.coinprice
+                        ? formatCurrencyLong(this.state.coinprice)
                         : formatCurrency(this.state.coinprice))}
                   </div>
                   <div className="coin-label align-right">
