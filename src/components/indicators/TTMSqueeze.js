@@ -82,8 +82,6 @@ export default class TTMSqueeze extends Component {
     });
   }
 
-  componentWillReceiveProps(nextProps) {}
-
   render() {
     //console.log(this.props.current)
 
