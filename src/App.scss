@@ -65,6 +65,9 @@ body {
   position: relative;
   z-index: 9;
   box-sizing: border-box;
+  @media (max-width: 1200px) {
+    padding: 5px;
+  }
 }
 .header-wrapper {
   display: flex;
@@ -110,6 +113,9 @@ body {
   align-items: stretch;
   padding: 8px;
   justify-content: flex-end;
+  @media (max-width: 1200px) {
+    display: none;
+  }
 }
 .coin-wrap {
   // display: flex;
@@ -207,15 +213,7 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%;
 }
-.red {
-  background-image: linear-gradient(#df4b7a 0.4px, transparent 0.6px),
-    linear-gradient(90deg, #df4b7a 0.4px, transparent 0.6px);
-}
-.green {
-  background-image: linear-gradient(#48ea61 0.4px, transparent 0.6px),
-    linear-gradient(90deg, #48ea61 0.4px, transparent 0.6px);
-}
-.coin-gradient {
+Y .coin-gradient {
   top: 0px;
   bottom: 0px;
   left: 0px;
@@ -298,18 +296,54 @@ input:checked + .slider:before {
 }
 
 .watch {
-  background-color: rgb(255, 152, 56);
+  // background-color: rgb(255, 152, 56);
+  &:before {
+    content: "●";
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    // border-radius: 50%;
+    // background-color: rgb(255, 152, 56);
+    color: rgb(255, 152, 56);
+    margin-right: 5px;
+  }
 }
 .fired-long {
-  background-color: #48ea61;
+  // background-color: #48ea61;
+  &:before {
+    content: "●";
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    // background-color: rgb(255, 152, 56);
+    color: #48ea61;
+    margin-right: 5px;
+  }
 }
 .fired-short {
-  background-color: #df4b7a;
+  // background-color: #df4b7a;
+  &:before {
+    content: "●";
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    // background-color: rgb(255, 152, 56);
+    color: #df4b7a;
+    margin-right: 5px;
+  }
 }
 .legend {
   padding: 0 10px;
   max-height: 38px;
   white-space: nowrap;
+  @media (max-width: 1200px) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+  }
 }
 .legend-text {
   display: inline-block;
@@ -319,8 +353,8 @@ input:checked + .slider:before {
 .legend .fired-long,
 .legend .fired-short {
   display: inline-block;
-  padding: 10px;
-  margin: 0 5px;
+  padding: 5px;
+  margin: 0 2px;
 }
 .grid {
   // flex: 1;

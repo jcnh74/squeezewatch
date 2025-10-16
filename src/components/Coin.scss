@@ -55,9 +55,12 @@
   flex-direction: row;
   justify-content: space-between;
   flex-wrap: wrap;
-  height: 28px;
+  height: 50px;
   text-align: center;
   background-color: rgba(0, 0, 0, 0.65);
+  @media (max-width: 1200px) {
+    height: 50px;
+  }
 }
 
 .box-body {
@@ -104,6 +107,9 @@
   letter-spacing: 3px;
   display: inline-block;
   font-family: "Exo 2", Arial, san-serif;
+  @media (max-width: 1200px) {
+    font-size: 2.5em;
+  }
 }
 
 .coin-name-pair-text {
@@ -124,6 +130,9 @@
   font-family: Exo 2;
   font-weight: 700;
   text-align: right;
+  @media (max-width: 1200px) {
+    font-size: 1.2em;
+  }
 }
 
 .coin-label {

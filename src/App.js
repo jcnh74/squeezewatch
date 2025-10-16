@@ -105,7 +105,7 @@ class App extends Component {
         };
       });
 
-      console.log(theCoins);
+      // console.log(theCoins);
 
       const options = myCoins.map((coinData, index) => {
         const coin = coinData.CoinInfo;
@@ -413,22 +413,9 @@ class App extends Component {
                   <div className={"squeezetimewrap"}>{globalsqueezetimes}</div>
                 </div>
               </div>
-              <div className={"header-group"}>
-                {/* <AsyncSelect
-                  className={"search"}
-                  isMulti={true}
-                  onChange={this.onChange}
-                  getOptionValue={(option) => option.symbol}
-                  getOptionLabel={(option) => option.name}
-                  loadOptions={this.getCoins}
-                  backspaceRemovesValue={true}
-                  name="form-field-name"
-                  value={this.state.value}
-                /> */}
-              </div>
+
               <div className={"header-group settings-group"}>
                 <div className={"legend"}>
-                  <div className={"legend-text"}>Legend: </div>
                   <div className={"watch"}>Watch</div>
                   <div className={"fired-long"}>Fired Long</div>
                   <div className={"fired-short"}>Fired Short</div>

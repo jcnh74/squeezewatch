@@ -18,8 +18,22 @@ export default class TTMSqueeze extends Component {
   }
 
   componentDidMount() {
-    const display = this.props.display;
+    this.computeChart();
+  }
 
+  componentDidUpdate(prevProps) {
+    // Recompute when relevant props change (osc, diff, display)
+    if (
+      prevProps.display !== this.props.display ||
+      prevProps.osc !== this.props.osc ||
+      prevProps.diff !== this.props.diff
+    ) {
+      this.computeChart();
+    }
+  }
+
+  computeChart() {
+    const display = this.props.display;
     const candleWidth = boxwidth / display;
     let chart = "";
     if (this.props.osc.length) {
@@ -41,6 +55,7 @@ export default class TTMSqueeze extends Component {
       });
 
       chart = this.props.osc.map((candle, i) => {
+        //console.log(this.props.osc[i]);
         const color = osc_color[i];
         const y1 = this.props.osc[i] < 0 ? 55 : 45;
         const y2 =

@@ -9,7 +9,7 @@ import BollingerBands from "./indicators/BollingerBands";
 import KeltnerChannel from "./indicators/KeltnerChannel";
 import TTMSqueeze from "./indicators/TTMSqueeze";
 //import Line from'./indicators/Line'
-//import RSI from'./indicators/RSI'
+//import RSI from "./indicators/RSI";
 
 import "./Coin.scss";
 
@@ -317,8 +317,10 @@ export default class Coin extends Component {
       var data2 = await Promise.all([
         fetch(url2).then((response) => response.json()), // parse each response as json
       ]);
-
-      const _data = data2[0].Data.concat(data[0].Data);
+      //console.log(data2);
+      const firstPart = Array.isArray(data2[0]?.Data) ? data2[0].Data : [];
+      const secondPart = Array.isArray(data[0]?.Data) ? data[0].Data : [];
+      const _data = firstPart.concat(secondPart);
       this.setSqueezeAlert(
         index,
         _data.slice(_data.length - 220, _data.length)
@@ -338,8 +340,8 @@ export default class Coin extends Component {
           "&e=CCCAGG"
       );
       await historyres.json().then((data) => {
-        //console.log('getCoin', data)
-        this.setSqueezeAlert(index, data.Data);
+        const safeData = Array.isArray(data?.Data) ? data.Data : [];
+        this.setSqueezeAlert(index, safeData);
       });
     }
 
@@ -390,6 +392,7 @@ export default class Coin extends Component {
     const symbol = this.props.coin.tsym === "USD" ? "$" : "฿";
     const indicatorColor =
       this.state.coin.percent_change_24h > 0 ? "red" : "green";
+
     return (
       <div
         className="coin-box coin"
@@ -495,15 +498,16 @@ export default class Coin extends Component {
                   batch={this.state.batch}
                   osc={this.state.scales[this.state.current][5]}
                   diff={this.state.scales[this.state.current][6]}
-                  className={this.state.settings ? "hide" : ""}
+                  className={this.state.settings ? "" : ""}
                 />
-                {/* <RSI 
-                    coin={this.state.coin} 
-                    display={this.state.display}
-                    length={this.state.length}
-                    sample={this.state.sample}
-                    histo={this.state.scales[this.state.current][4]} 
-                    className={(this.state.settings) ? 'hide' : ''} /> */}
+                {/* <RSI
+                  coin={this.state.coin}
+                  display={this.state.display}
+                  length={this.state.length}
+                  sample={this.state.sample}
+                  histo={this.state.scales[this.state.current][4]}
+                  className={this.state.settings ? "hide" : ""}
+                /> */}
               </div>
             </div>
           </div>
